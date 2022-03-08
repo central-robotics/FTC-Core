@@ -1,6 +1,7 @@
 package com.chsrobotics.ftccore.engine.localization.localizer;
 
 import com.chsrobotics.ftccore.geometry.Position;
+import com.chsrobotics.ftccore.hardware.HardwareManager;
 
 public abstract class Localizer {
     public Position currentPosition = null;
@@ -9,7 +10,9 @@ public abstract class Localizer {
     public double currentTime = 0.0;
     private double lastTime = 0.0;
 
-    public Localizer(Position initialState)
+    private HardwareManager hardware;
+
+    public Localizer(Position initialState, HardwareManager hardware)
     {
         double systemTime = System.currentTimeMillis();
 
@@ -18,13 +21,15 @@ public abstract class Localizer {
 
         currentTime = systemTime;
         lastTime = systemTime;
+
+        this.hardware = hardware;
     }
 
     public Position getRobotPosition() {
 
         return null;
     }
-    public void updateRobotPosition() {
+    public void updateRobotPosition(Position pos) {
 
     }
 }
