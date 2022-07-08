@@ -14,6 +14,7 @@ public class RuntimeVariables {
      * Sets the current starting alliance color and field position
      */
     public static void setCurrentOpMode(OpMode currentOpMode) {
+
         RuntimeVariables.currentOpMode = currentOpMode;
     }
 
