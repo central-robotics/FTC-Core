@@ -1,9 +1,6 @@
 package com.chsrobotics.ftccore.hardware.config;
 
 import com.chsrobotics.ftccore.hardware.config.accessory.Accessory;
-import com.chsrobotics.ftccore.hardware.config.accessory.AccessoryType;
-import com.qualcomm.hardware.bosch.BNO055IMU;
-import com.qualcomm.robotcore.hardware.DcMotor;
 
 import java.util.ArrayList;
 

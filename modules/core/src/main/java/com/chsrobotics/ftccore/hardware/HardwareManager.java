@@ -2,10 +2,9 @@ package com.chsrobotics.ftccore.hardware;
 
 import com.chsrobotics.ftccore.hardware.config.Config;
 import com.chsrobotics.ftccore.hardware.config.accessory.Accessory;
-import com.chsrobotics.ftccore.hardware.config.accessory.AccessoryType;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.*;
-import org.firstinspires.ftc.robotcore.external.hardware.camera.Camera;
+
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 
 /**
