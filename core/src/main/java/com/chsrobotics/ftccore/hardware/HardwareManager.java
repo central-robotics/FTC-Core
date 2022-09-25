@@ -1,11 +1,10 @@
 package com.chsrobotics.ftccore.hardware;
 
-import com.chsrobotics.ftccore.hardware.config.Config;
+import com.chsrobotics.ftccore.hardware.config.FTCCoreConfiguration;
 import com.chsrobotics.ftccore.hardware.config.accessory.Accessory;
-import com.chsrobotics.ftccore.hardware.config.accessory.AccessoryType;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.*;
-import org.firstinspires.ftc.robotcore.external.hardware.camera.Camera;
+
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 
 /**
@@ -13,14 +12,6 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
  * Specifying this interface is required for most functions throughout FTCCore.
  */
 public class HardwareManager {
-    /**
-     * If no drive motors were specified in the configuration, this provides an easier way to tell if navigation should be used or not.
-     */
-    public final boolean navEnabled;
-    /**
-     * If no IMU was specified, this provides an easier way to tell if IMU-based orientation should be used within the localization engine.
-     */
-    public final boolean imuLocalEnabled;
     /**
      * The hardware map object used access hardware configuration to create hardware objects.
      */
@@ -53,33 +44,17 @@ public class HardwareManager {
      * @param config The robot configuration. This can be created through the ConfigBuilder class.
      * @param hardware The hardware map object used access hardware configuration to create hardware objects.
      */
-    public HardwareManager(Config config, HardwareMap hardware)
+    public HardwareManager(FTCCoreConfiguration config, HardwareMap hardware)
     {
         hardwareMap = hardware;
-
-        if (config.imu == null)
-            imuLocalEnabled = false;
-        else
-            imuLocalEnabled = true;
-
-        if (config.driveMotors == null)
-            navEnabled = false;
-        else
-            navEnabled = true;
-
-        initializeHardware(config);
-    }
-
-    private void initializeHardware(Config config)
-    {
         initializeDriveMotors(config);
         initializeIMU(config);
         initializeAccessories(config);
     }
 
-    private void initializeDriveMotors(Config config)
+    private void initializeDriveMotors(FTCCoreConfiguration config)
     {
-        if (!navEnabled)
+        if (!isNavEnabled())
             return;
 
         for (int i = 0; i < 4; i++)
@@ -93,9 +68,9 @@ public class HardwareManager {
         }
     }
 
-    private void initializeIMU(Config config)
+    private void initializeIMU(FTCCoreConfiguration config)
     {
-        if (!imuLocalEnabled)
+        if (!isImuLocalEnabled())
             return;
 
         imu = hardwareMap.get(BNO055IMU.class, config.imu);
@@ -107,7 +82,7 @@ public class HardwareManager {
         imu.initialize(params);
     }
 
-    private void initializeAccessories(Config config)
+    private void initializeAccessories(FTCCoreConfiguration config)
     {
         if (config.accessories.size() == 0)
             return;
@@ -177,6 +152,14 @@ public class HardwareManager {
                     break;
             }
         }
-
     }
+
+    public boolean isNavEnabled() {
+        return driveMotors != null;
+    }
+
+    public boolean isImuLocalEnabled() {
+        return imu != null;
+    }
+
 }
