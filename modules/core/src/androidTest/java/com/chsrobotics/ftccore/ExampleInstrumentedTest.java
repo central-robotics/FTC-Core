@@ -27,13 +27,13 @@ public class ExampleInstrumentedTest {
         Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
         assertEquals("com.chsrobotics.ftccore", appContext.getPackageName());
 
-        Config configuration = new ConfigBuilder()
+        Config configuration = new Config.Builder()
                 .setDriveMotors("","","","")
                 .setIMU("imu")
                 .addAccessory(new Accessory(AccessoryType.MOTOR, "name"))
                 .addAccessory(new Accessory(AccessoryType.SERVO, "servo"))
                 .addAccessory(new Accessory(AccessoryType.WEBCAM, "camera"))
-                .createConfig();
+                .build();
 
         HardwareManager hardwareManager = new HardwareManager(configuration, null);
     }

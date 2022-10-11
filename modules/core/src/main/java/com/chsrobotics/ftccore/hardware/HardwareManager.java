@@ -176,6 +176,19 @@ public class HardwareManager {
                     break;
             }
         }
-
     }
+
+    public DcMotor getLeftFrontMotor() {
+        return driveMotors[0];
+    }
+    public DcMotor getRightFrontMotor() {
+        return driveMotors[1];
+    }
+    public DcMotor getRightBackMotor() {
+        return driveMotors[2];
+    }
+    public DcMotor getLeftBackMotor() {
+        return driveMotors[3];
+    }
+
 }

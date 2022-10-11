@@ -10,9 +10,7 @@ public abstract class Localizer {
     public double currentTime = 0.0;
     private double lastTime = 0.0;
 
-    private HardwareManager hardware;
-
-    public Localizer(Position initialState, HardwareManager hardware)
+    public Localizer(Position initialState)
     {
         double systemTime = System.currentTimeMillis();
 
@@ -21,14 +19,15 @@ public abstract class Localizer {
 
         currentTime = systemTime;
         lastTime = systemTime;
-
-        this.hardware = hardware;
     }
 
     public Position getRobotPosition() {
 
         return null;
     }
+
+    public abstract Position getRobotPosition(Position previousPosition);
+
     public void updateRobotPosition(Position pos) {
 
     }

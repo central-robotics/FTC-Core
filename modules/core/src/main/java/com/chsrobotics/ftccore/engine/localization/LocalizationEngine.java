@@ -8,11 +8,14 @@ import com.chsrobotics.ftccore.engine.localization.localizer.VisionLocalizer;
 import com.chsrobotics.ftccore.geometry.Position;
 import com.chsrobotics.ftccore.hardware.HardwareManager;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class LocalizationEngine {
     private Position currentPosition;
     private Position lastPosition;
 
-    private Localizer[] localizers;
+    private List<Localizer> localizers;
 
     private final HardwareManager hardware;
 
@@ -25,43 +28,31 @@ public class LocalizationEngine {
 
     public Position getCurrentPosition()
     {
-        Position[] positions = new Position[localizers.length];
+        List<Position> positions = new ArrayList<>();
 
-        for (int i = 0; i < localizers.length; i++)
-        {
-            positions[i] = localizers[i].getRobotPosition();
+        for (Localizer localizer : localizers) {
+            positions.add(localizer.getRobotPosition());
         }
 
-        localizers[0].updateRobotPosition(positions[0]);
+        localizers.get(0).updateRobotPosition(positions.get(0));
 
-        return positions[0]; //Temporarily returning only encoder based position.
+        return positions.get(0); //Temporarily returning only encoder based position.
     }
 
     private void initializeLocalization()
     {
-        int localizerCapacity = 0;
+        localizers = new ArrayList<>();
 
-        if (hardware.driveMotors.length == 4)
-            localizerCapacity++;
+        if (hardware.driveMotors.length == 4) {
+            localizers.add(new EncoderLocalizer(null, hardware));
+        }
 
-        if (hardware.imuLocalEnabled)
-            localizerCapacity++;
+        if (hardware.imuLocalEnabled) {
+            localizers.add(new IMULocalizer(null, hardware));
+        }
 
-        if (hardware.accessoryCameras.length > 0)
-            localizerCapacity++;
-
-        localizers = new Localizer[localizerCapacity];
-
-        if (localizerCapacity > 0)
-        {
-            if (hardware.driveMotors.length == 4)
-                localizers[0] = new EncoderLocalizer(null, hardware);
-
-            if (hardware.imuLocalEnabled)
-                localizers[1] = new IMULocalizer(null, hardware);
-
-            if (hardware.accessoryCameras.length > 0)
-                localizers[2] = new VisionLocalizer(null, hardware);
+        if (hardware.accessoryCameras.length > 0) {
+            localizers.add(new VisionLocalizer(null, hardware));
         }
     }
 }
