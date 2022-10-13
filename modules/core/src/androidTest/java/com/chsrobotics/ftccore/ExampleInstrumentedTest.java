@@ -6,7 +6,6 @@ import androidx.test.ext.junit.runners.AndroidJUnit4;
 
 import com.chsrobotics.ftccore.hardware.HardwareManager;
 import com.chsrobotics.ftccore.hardware.config.Config;
-import com.chsrobotics.ftccore.hardware.config.ConfigBuilder;
 import com.chsrobotics.ftccore.hardware.config.accessory.Accessory;
 import com.chsrobotics.ftccore.hardware.config.accessory.AccessoryType;
 import org.junit.Test;

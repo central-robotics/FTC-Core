@@ -1,5 +1,6 @@
 package com.chsrobotics.ftccore.pipeline;
 
+import com.chsrobotics.ftccore.engine.localization.LocalizationEngine;
 import com.chsrobotics.ftccore.engine.navigation.NavigationEngine;
 import com.chsrobotics.ftccore.engine.navigation.path.Path;
 import com.chsrobotics.ftccore.geometry.Position;
@@ -19,8 +20,17 @@ public class Pipeline {
     }
 
     public void execute() {
-        NavigationEngine navigationEngine = new NavigationEngine(manager);
-        for (Path path : paths) {
+        LocalizationEngine localization = new LocalizationEngine(manager);
+        NavigationEngine navigationEngine = new NavigationEngine(localization, manager);
+        for (Path path : paths)
+        {
+            if (!path.isCurved)
+            {
+                for (int i = 0; i < path.positions.size(); i++)
+                {
+                    navigationEngine.navigateInALinearFashion(path.positions.get(i));
+                }
+            }
         }
     }
 

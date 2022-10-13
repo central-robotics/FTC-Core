@@ -15,7 +15,7 @@ public class EncoderLocalizer extends Localizer{
     private int lastLfPos, lastRfPos, lastRbPos, lastLbPos;
 
     public EncoderLocalizer(Position initialState, HardwareManager hardware) {
-        super(initialState);
+        super(initialState, hardware);
         this.hardware = hardware;
     }
 

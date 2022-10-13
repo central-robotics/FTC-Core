@@ -1,6 +1,7 @@
 package com.chsrobotics.ftccore.hardware.config;
 
 import com.chsrobotics.ftccore.hardware.config.accessory.Accessory;
+import com.qualcomm.robotcore.hardware.PIDCoefficients;
 
 import java.util.ArrayList;
 
@@ -8,11 +9,15 @@ public class Config {
     public String[] driveMotors;
     public String imu;
     public ArrayList<Accessory> accessories;
+    public PIDCoefficients linearCoeffs;
+    public PIDCoefficients rotCoeffs;
 
     public static class Builder {
         private String[] driveMotors;
         private String imu;
         private ArrayList accessories;
+        private PIDCoefficients linearCoeffs;
+        private PIDCoefficients rotCoeffs;
 
         /**
          Creates a new instance of the ConfigBuilder for setting up the robot hardware.
@@ -63,6 +68,19 @@ public class Config {
         }
 
         /**
+         * Sets the gain values for the main PID controller
+         * @param linearCoeffs coefficients for linear movements
+         * @param rotCoeffs coefficients for rotational movements
+         */
+        public Builder setPIDCoefficients(PIDCoefficients linearCoeffs, PIDCoefficients rotCoeffs)
+        {
+            this.linearCoeffs = linearCoeffs;
+            this.rotCoeffs = rotCoeffs;
+
+            return this;
+        }
+
+        /**
          Derives a robot configuration from the configuration builder.
          */
         public Config build() {
@@ -71,6 +89,8 @@ public class Config {
             config.driveMotors = driveMotors;
             config.imu = imu;
             config.accessories = accessories;
+            config.linearCoeffs = linearCoeffs;
+            config.rotCoeffs = rotCoeffs;
 
             return config;
         }
