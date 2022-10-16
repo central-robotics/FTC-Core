@@ -1,6 +1,5 @@
 package com.chsrobotics.ftccore.hardware;
 
-import com.chsrobotics.ftccore.hardware.config.FTCCoreConfiguration;
 import com.chsrobotics.ftccore.engine.navigation.control.PID;
 import com.chsrobotics.ftccore.hardware.config.Config;
 import com.chsrobotics.ftccore.hardware.config.accessory.Accessory;
@@ -52,7 +51,7 @@ public class HardwareManager {
      * @param config The robot configuration. This can be created through the ConfigBuilder class.
      * @param hardware The hardware map object used access hardware configuration to create hardware objects.
      */
-    public HardwareManager(FTCCoreConfiguration config, HardwareMap hardware)
+    public HardwareManager(Config config, HardwareMap hardware)
     {
         hardwareMap = hardware;
         initializeDriveMotors(config);
@@ -61,7 +60,7 @@ public class HardwareManager {
         initializePID(config);
     }
 
-    private void initializeDriveMotors(FTCCoreConfiguration config)
+    private void initializeDriveMotors(Config config)
     {
         if (!isNavEnabled())
             return;
@@ -77,7 +76,7 @@ public class HardwareManager {
         }
     }
 
-    private void initializeIMU(FTCCoreConfiguration config)
+    private void initializeIMU(Config config)
     {
         if (!isImuLocalEnabled())
             return;
@@ -169,6 +168,7 @@ public class HardwareManager {
 
     public boolean isImuLocalEnabled() {
         return imu != null;
+    }
     private void initializePID(Config config)
     {
         linearCtrler = new PID(config.linearCoeffs);
