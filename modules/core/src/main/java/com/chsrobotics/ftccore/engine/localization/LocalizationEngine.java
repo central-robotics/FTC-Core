@@ -47,7 +47,7 @@ public class LocalizationEngine {
             localizers.add(new EncoderLocalizer(null, hardware));
         }
 
-        if (hardware.imuLocalEnabled) {
+        if (hardware.isImuLocalEnabled()) {
             localizers.add(new IMULocalizer(null, hardware));
         }
 

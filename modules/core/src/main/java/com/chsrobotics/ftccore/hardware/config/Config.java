@@ -15,7 +15,7 @@ public class Config {
     public static class Builder {
         private String[] driveMotors;
         private String imu;
-        private ArrayList accessories;
+        private ArrayList<Accessory> accessories;
         private PIDCoefficients linearCoeffs;
         private PIDCoefficients rotCoeffs;
 
@@ -24,7 +24,7 @@ public class Config {
          */
         public Builder()
         {
-            accessories = new ArrayList();
+            accessories = new ArrayList<>();
         }
 
         /**
