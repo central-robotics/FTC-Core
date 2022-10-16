@@ -1,6 +1,8 @@
 package com.chsrobotics.ftccore.hardware;
 
 import com.chsrobotics.ftccore.hardware.config.FTCCoreConfiguration;
+import com.chsrobotics.ftccore.engine.navigation.control.PID;
+import com.chsrobotics.ftccore.hardware.config.Config;
 import com.chsrobotics.ftccore.hardware.config.accessory.Accessory;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.*;
@@ -40,6 +42,12 @@ public class HardwareManager {
     public WebcamName[] accessoryCameras;
 
     /**
+     * Main PID controllers that the Nav engine will draw on;
+     */
+    public PID linearCtrler;
+    public PID rotCtrler;
+
+    /**
      * Creates a hardware management interface and initializes all the hardware as specified by the configuration.
      * @param config The robot configuration. This can be created through the ConfigBuilder class.
      * @param hardware The hardware map object used access hardware configuration to create hardware objects.
@@ -50,6 +58,7 @@ public class HardwareManager {
         initializeDriveMotors(config);
         initializeIMU(config);
         initializeAccessories(config);
+        initializePID(config);
     }
 
     private void initializeDriveMotors(FTCCoreConfiguration config)
@@ -82,7 +91,7 @@ public class HardwareManager {
         imu.initialize(params);
     }
 
-    private void initializeAccessories(FTCCoreConfiguration config)
+    private void initializeAccessories(Config config)
     {
         if (config.accessories.size() == 0)
             return;
@@ -160,6 +169,21 @@ public class HardwareManager {
 
     public boolean isImuLocalEnabled() {
         return imu != null;
+    private void initializePID(Config config)
+    {
+        linearCtrler = new PID(config.linearCoeffs);
+        rotCtrler = new PID(config.rotCoeffs);
     }
 
+
+    public DcMotor getLeftFrontMotor() {
+        return driveMotors[0];
+    }
+    public DcMotor getRightFrontMotor() {
+        return driveMotors[1];
+    }
+    public DcMotor getRightBackMotor() {
+        return driveMotors[2];
+    }
+    public DcMotor getLeftBackMotor() { return driveMotors[3]; }
 }

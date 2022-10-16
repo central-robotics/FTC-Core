@@ -5,7 +5,7 @@ import androidx.test.platform.app.InstrumentationRegistry;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
 import com.chsrobotics.ftccore.hardware.HardwareManager;
-import com.chsrobotics.ftccore.hardware.config.FTCCoreConfiguration;
+import com.chsrobotics.ftccore.hardware.config.Config;
 import com.chsrobotics.ftccore.hardware.config.accessory.Accessory;
 import com.chsrobotics.ftccore.hardware.config.accessory.AccessoryType;
 import org.junit.Test;
@@ -26,12 +26,13 @@ public class ExampleInstrumentedTest {
         Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
         assertEquals("com.chsrobotics.ftccore", appContext.getPackageName());
 
-        FTCCoreConfiguration configuration = new FTCCoreConfiguration()
+        Config configuration = new Config.Builder()
                 .setDriveMotors("","","","")
                 .setIMU("imu")
                 .addAccessory(new Accessory(AccessoryType.MOTOR, "name"))
                 .addAccessory(new Accessory(AccessoryType.SERVO, "servo"))
-                .addAccessory(new Accessory(AccessoryType.WEBCAM, "camera"));`
+                .addAccessory(new Accessory(AccessoryType.WEBCAM, "camera"))
+                .build();
 
         HardwareManager hardwareManager = new HardwareManager(configuration, null);
     }
