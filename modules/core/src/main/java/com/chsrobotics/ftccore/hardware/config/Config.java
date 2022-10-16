@@ -1,6 +1,8 @@
 package com.chsrobotics.ftccore.hardware.config;
 
 import com.chsrobotics.ftccore.hardware.config.accessory.Accessory;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.PIDCoefficients;
 
 import java.util.ArrayList;
@@ -11,6 +13,7 @@ public class Config {
     public ArrayList<Accessory> accessories;
     public PIDCoefficients linearCoeffs;
     public PIDCoefficients rotCoeffs;
+    public LinearOpMode opMode;
 
     public static class Builder {
         private String[] driveMotors;
@@ -18,6 +21,7 @@ public class Config {
         private ArrayList<Accessory> accessories;
         private PIDCoefficients linearCoeffs;
         private PIDCoefficients rotCoeffs;
+        private LinearOpMode opMode;
 
         /**
          Creates a new instance of the ConfigBuilder for setting up the robot hardware.
@@ -68,6 +72,18 @@ public class Config {
         }
 
         /**
+         * Registers the current OpMode
+         * @param opMode the OpMode
+         * @return
+         */
+        public Builder setOpMode(LinearOpMode opMode)
+        {
+            this.opMode = opMode;
+
+            return this;
+        }
+
+        /**
          * Sets the gain values for the main PID controller
          * @param linearCoeffs coefficients for linear movements
          * @param rotCoeffs coefficients for rotational movements
@@ -91,6 +107,7 @@ public class Config {
             config.accessories = accessories;
             config.linearCoeffs = linearCoeffs;
             config.rotCoeffs = rotCoeffs;
+            config.opMode = opMode;
 
             return config;
         }

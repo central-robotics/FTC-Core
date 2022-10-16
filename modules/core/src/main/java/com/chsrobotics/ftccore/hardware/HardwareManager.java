@@ -4,6 +4,7 @@ import com.chsrobotics.ftccore.engine.navigation.control.PID;
 import com.chsrobotics.ftccore.hardware.config.Config;
 import com.chsrobotics.ftccore.hardware.config.accessory.Accessory;
 import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.*;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -47,6 +48,13 @@ public class HardwareManager {
     public PID rotCtrler;
 
     /**
+     * The LinearOpMode
+     */
+    public LinearOpMode opMode;
+
+    public boolean imuLocalEnabled = true;
+
+    /**
      * Creates a hardware management interface and initializes all the hardware as specified by the configuration.
      * @param config The robot configuration. This can be created through the ConfigBuilder class.
      * @param hardware The hardware map object used access hardware configuration to create hardware objects.
@@ -58,13 +66,12 @@ public class HardwareManager {
         initializeIMU(config);
         initializeAccessories(config);
         initializePID(config);
+        initializeLinearOpMode(config);
     }
 
     private void initializeDriveMotors(Config config)
     {
-        if (!isNavEnabled())
-            return;
-
+        driveMotors = new DcMotor[4];
         for (int i = 0; i < 4; i++)
         {
             driveMotors[i] = hardwareMap.dcMotor.get(config.driveMotors[i]);
@@ -78,7 +85,7 @@ public class HardwareManager {
 
     private void initializeIMU(Config config)
     {
-        if (!isImuLocalEnabled())
+        if (!imuLocalEnabled)
             return;
 
         imu = hardwareMap.get(BNO055IMU.class, config.imu);
@@ -92,8 +99,12 @@ public class HardwareManager {
 
     private void initializeAccessories(Config config)
     {
-        if (config.accessories.size() == 0)
+        if (config.accessories.size() == 0) {
+            accessoryCameras = new WebcamName[0];
+            accessoryMotors = new DcMotorEx[0];
+            accessoryServos = new Servo[0];
             return;
+        }
 
         int motors = 0;
         int servos = 0;
@@ -117,17 +128,10 @@ public class HardwareManager {
             }
         }
 
-        if (motors > 0) {
-            accessoryMotors = new DcMotorEx[motors];
-        }
+        accessoryMotors = new DcMotorEx[motors];
+        accessoryServos = new Servo[servos];
+        accessoryCameras = new WebcamName[cameras];
 
-        if (servos > 0) {
-            accessoryServos = new Servo[servos];
-        }
-
-        if (cameras > 0) {
-            accessoryCameras = new WebcamName[cameras];
-        }
 
         int motorIndex = 0;
         int servoIndex = 0;
@@ -173,6 +177,11 @@ public class HardwareManager {
     {
         linearCtrler = new PID(config.linearCoeffs);
         rotCtrler = new PID(config.rotCoeffs);
+    }
+
+    private void initializeLinearOpMode(Config config)
+    {
+        opMode = config.opMode;
     }
 
 

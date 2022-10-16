@@ -32,6 +32,9 @@ public class Pipeline {
                 }
             }
         }
+        Path lastPath = paths.get(paths.size() - 1);
+        Position lastPos = lastPath.positions.get(lastPath.positions.size() - 1);
+        navigationEngine.navigateInALinearFashion(lastPos);
     }
 
     public static class Builder {

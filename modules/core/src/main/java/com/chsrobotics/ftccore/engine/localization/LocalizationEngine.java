@@ -12,8 +12,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class LocalizationEngine {
-    private Position currentPosition;
-    private Position lastPosition;
+    public Position currentPosition = new Position(0, 0, 0);
+    public Position lastPosition = new Position(0, 0, 0);
 
     private List<Localizer> localizers;
 
@@ -31,12 +31,15 @@ public class LocalizationEngine {
         List<Position> positions = new ArrayList<>();
 
         for (Localizer localizer : localizers) {
-            positions.add(localizer.getRobotPosition());
+            positions.add(localizer.getRobotPosition(lastPosition));
         }
 
         localizers.get(0).updateRobotPosition(positions.get(0));
 
-        return positions.get(0); //Temporarily returning only encoder based position.
+        lastPosition = currentPosition;
+        currentPosition = positions.get(0);
+
+        return currentPosition; //Temporarily returning only encoder based position.
     }
 
     private void initializeLocalization()
