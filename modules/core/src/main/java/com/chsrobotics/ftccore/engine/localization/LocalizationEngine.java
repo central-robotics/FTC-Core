@@ -28,6 +28,7 @@ public class LocalizationEngine {
 
     public Position getCurrentPosition()
     {
+        //Kalman filter
         List<Position> positions = new ArrayList<>();
 
         for (Localizer localizer : localizers) {
@@ -38,6 +39,14 @@ public class LocalizationEngine {
 
         lastPosition = currentPosition;
         currentPosition = positions.get(0);
+
+        if (hardware.debugMode)
+        {
+            hardware.opMode.telemetry.addData("X", currentPosition.x);
+            hardware.opMode.telemetry.addData("Y", currentPosition.y);
+            hardware.opMode.telemetry.addData("T", currentPosition.t);
+            hardware.opMode.telemetry.update();
+        }
 
         return currentPosition; //Temporarily returning only encoder based position.
     }

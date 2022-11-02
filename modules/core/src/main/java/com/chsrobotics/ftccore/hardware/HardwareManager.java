@@ -28,6 +28,8 @@ public class HardwareManager {
      */
     public BNO055IMU imu;
 
+    public final boolean debugMode;
+
     /**
      * Array containing accessory motors.
      */
@@ -62,6 +64,7 @@ public class HardwareManager {
     public HardwareManager(Config config, HardwareMap hardware)
     {
         hardwareMap = hardware;
+        debugMode = config.debugMode;
         initializeDriveMotors(config);
         initializeIMU(config);
         initializeAccessories(config);

@@ -4,6 +4,7 @@ import com.chsrobotics.ftccore.hardware.config.accessory.Accessory;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.PIDCoefficients;
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 import java.util.ArrayList;
 
@@ -15,6 +16,9 @@ public class Config {
     public PIDCoefficients rotCoeffs;
     public LinearOpMode opMode;
 
+    public boolean debugMode;
+
+
     public static class Builder {
         private String[] driveMotors;
         private String imu;
@@ -22,6 +26,10 @@ public class Config {
         private PIDCoefficients linearCoeffs;
         private PIDCoefficients rotCoeffs;
         private LinearOpMode opMode;
+
+        private boolean debugMode;
+
+
 
         /**
          Creates a new instance of the ConfigBuilder for setting up the robot hardware.
@@ -45,6 +53,16 @@ public class Config {
                     m0, m1, m2, m3
             };
 
+            return this;
+        }
+
+        /**
+         * If debug mode is enabled, telemetry will be shown in the driver station for debug purposes.
+         * @param mode Sets debug mode to true or false.
+         * @return
+         */
+        public Builder setDebugMode(boolean mode) {
+            debugMode = mode;
             return this;
         }
 
@@ -108,6 +126,7 @@ public class Config {
             config.linearCoeffs = linearCoeffs;
             config.rotCoeffs = rotCoeffs;
             config.opMode = opMode;
+            config.debugMode = debugMode;
 
             return config;
         }

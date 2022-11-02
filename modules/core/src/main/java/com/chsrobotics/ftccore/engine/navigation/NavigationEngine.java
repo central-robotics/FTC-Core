@@ -9,8 +9,8 @@ import com.chsrobotics.ftccore.utilities.MathUtil;
 public class NavigationEngine {
     private final HardwareManager hardware;
     public final LocalizationEngine localization;
-    private final PID linearCtrler;
-    private final PID rotCtrler;
+    private final PID linearController;
+    private final PID rotationController;
     private final SplineController splineController;
     public Position position = new Position();
     double t;
@@ -23,8 +23,8 @@ public class NavigationEngine {
     {
         this.hardware = hardware;
         this.localization = localization;
-        this.linearCtrler = hardware.linearCtrler;
-        this.rotCtrler = hardware.rotCtrler;
+        this.linearController = hardware.linearCtrler;
+        this.rotationController = hardware.rotCtrler;
 
         splineController = new SplineController();
     }
@@ -53,16 +53,25 @@ public class NavigationEngine {
         if (thetaError < 0 && (thetaError > -Math.PI))
             isCounterClockwise = false;
 
+        hardware.opMode.telemetry.addData("Ep", error);
         hardware.opMode.telemetry.addData("Et", thetaError);
         hardware.opMode.telemetry.addData("Ct", position.t);
         hardware.opMode.telemetry.addData("Dt", destination.t);
         hardware.opMode.telemetry.addData("V", MathUtil.calculateDistance(position, localization.lastPosition));
+        if (error >= 10) {
+            hardware.opMode.telemetry.addLine("Position");
+        }
+        if (thetaError >= 0.02) {
+            hardware.opMode.telemetry.addLine("Theta");
+        }
         hardware.opMode.telemetry.update();
-        return (error < 10 && Math.abs(thetaError) < 0.05 && MathUtil.calculateDistance(position, localization.lastPosition) < 5);
+        return (error < 10 && Math.abs(thetaError) < 0.02); //&& MathUtil.calculateDistance(position, localization.lastPosition) < 5);
     }
 
     public void navigateInALinearFashion(Position destination)
     {
+        position = localization.getCurrentPosition();
+
         while (!isTargetReached(destination) &&  !hardware.opMode.isStopRequested())
         {
             position = localization.getCurrentPosition();
@@ -70,13 +79,13 @@ public class NavigationEngine {
             double orientation, negOutput, posOutput;
 
             if (destination.x - position.x > 0)
-                orientation = Math.atan(linearCtrler.getSlope(destination, position)) - Math.PI / 4 - position.t;
+                orientation = Math.atan(linearController.getSlope(destination, position)) - Math.PI / 4 - position.t;
             else if (destination.x - position.x < 0)
-                orientation = Math.atan(linearCtrler.getSlope(destination, position)) + Math.PI - Math.PI / 4 - position.t;
+                orientation = Math.atan(linearController.getSlope(destination, position)) + Math.PI - Math.PI / 4 - position.t;
             else
                 orientation = Math.PI / 2;
 
-            magnitude = linearCtrler.getOutput(error, 0);
+            magnitude = linearController.getOutput(error, 0);
 
             negOutput = magnitude * Math.sin(orientation);
 
@@ -86,12 +95,13 @@ public class NavigationEngine {
                 posOutput = magnitude * Math.cos(orientation);
             }
 
-            double thetaOutput = rotCtrler.getOutput(Math.abs(thetaError), 0);
+            double thetaOutput = rotationController.getOutput(Math.abs(thetaError), 0);
 
             hardware.getLeftFrontMotor().setPower((-0.1 * posOutput) - (isCounterClockwise ? -1 : 1) * thetaOutput);
             hardware.getRightFrontMotor().setPower((0.1 * negOutput) - (isCounterClockwise ? -1 : 1) * thetaOutput);
             hardware.getLeftBackMotor().setPower((-0.1 * negOutput) - (isCounterClockwise ? -1 : 1) * thetaOutput);
             hardware.getRightBackMotor().setPower((0.1 * posOutput) - (isCounterClockwise ? -1 : 1) * thetaOutput);
         }
+        linearController.resetSum();
     }
 }
