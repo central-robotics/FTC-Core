@@ -55,9 +55,6 @@ public class Pipeline {
         }
 
         public Builder addLinearPath(Position... positions) {
-            for (Position position : positions) {
-                position.t *= Math.PI / 180;
-            }
             paths.add(Path.linear(positions));
             return this;
         }

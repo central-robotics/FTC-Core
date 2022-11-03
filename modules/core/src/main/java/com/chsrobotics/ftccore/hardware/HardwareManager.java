@@ -22,7 +22,7 @@ public class HardwareManager {
     /**
      * Four component array containing the four drive motors. Modifying this variable is extremely dangerous.
      */
-    public DcMotor[] driveMotors;
+    public DcMotorEx[] driveMotors;
     /**
      * The IMU. Modifying this variable is extremely dangerous.
      */
@@ -74,10 +74,10 @@ public class HardwareManager {
 
     private void initializeDriveMotors(Config config)
     {
-        driveMotors = new DcMotor[4];
+        driveMotors = new DcMotorEx[4];
         for (int i = 0; i < 4; i++)
         {
-            driveMotors[i] = hardwareMap.dcMotor.get(config.driveMotors[i]);
+            driveMotors[i] = (DcMotorEx) hardwareMap.dcMotor.get(config.driveMotors[i]);
             driveMotors[i].setDirection(DcMotorSimple.Direction.FORWARD);
             driveMotors[i].setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
@@ -188,14 +188,14 @@ public class HardwareManager {
     }
 
 
-    public DcMotor getLeftFrontMotor() {
+    public DcMotorEx getLeftFrontMotor() {
         return driveMotors[0];
     }
-    public DcMotor getRightFrontMotor() {
+    public DcMotorEx getRightFrontMotor() {
         return driveMotors[1];
     }
-    public DcMotor getRightBackMotor() {
+    public DcMotorEx getRightBackMotor() {
         return driveMotors[2];
     }
-    public DcMotor getLeftBackMotor() { return driveMotors[3]; }
+    public DcMotorEx getLeftBackMotor() { return driveMotors[3]; }
 }
