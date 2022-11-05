@@ -1,5 +1,7 @@
 package com.chsrobotics.ftccore.pipeline;
 
+import com.chsrobotics.ftccore.actions.Action;
+import com.chsrobotics.ftccore.actions.ActionManager;
 import com.chsrobotics.ftccore.engine.localization.LocalizationEngine;
 import com.chsrobotics.ftccore.engine.navigation.NavigationEngine;
 import com.chsrobotics.ftccore.engine.navigation.path.Path;
@@ -12,55 +14,83 @@ import java.util.List;
 public class Pipeline {
 
     private HardwareManager manager;
-    private List<Path> paths = new ArrayList<>();
+    private ArrayList<PipelineStep> steps;
+    private ActionManager actionManager;
 
-    private Pipeline(HardwareManager manager, List<Path> paths) {
+    private Pipeline(HardwareManager manager, ArrayList<PipelineStep> steps) {
         this.manager = manager;
-        this.paths = paths;
+        this.steps = steps;
+        actionManager = new ActionManager();
     }
 
     public void execute() {
         LocalizationEngine localization = new LocalizationEngine(manager);
         NavigationEngine navigationEngine = new NavigationEngine(localization, manager);
-        for (Path path : paths)
+
+        for (PipelineStep step : steps)
         {
-            if (!path.isCurved)
+            if (step.type == PipelineStep.StepType.navigation)
             {
-                for (int i = 0; i < path.positions.size(); i++)
+                assert step.path != null;
+                if (!step.path.isCurved)
                 {
-                    navigationEngine.navigateInALinearFashion(path.positions.get(i));
+                    for (int i = 0; i < step.path.positions.size(); i++)
+                    {
+                        navigationEngine.navigateInALinearFashion(step.path.positions.get(i));
+                    }
                 }
+
+//                Path lastPath = paths.get(paths.size() - 1);
+//                Position lastPos = lastPath.positions.get(lastPath.positions.size() - 1);
+//                navigationEngine.navigateInALinearFashion(lastPos);
+            } else
+            {
+                assert step.action != null;
+                step.action.execute();
             }
         }
-        Path lastPath = paths.get(paths.size() - 1);
-        Position lastPos = lastPath.positions.get(lastPath.positions.size() - 1);
-        navigationEngine.navigateInALinearFashion(lastPos);
+//        for (Path path : paths)
+//        {
+//            if (!path.isCurved)
+//            {
+//                for (int i = 0; i < path.positions.size(); i++)
+//                {
+//                    navigationEngine.navigateInALinearFashion(path.positions.get(i));
+//                }
+//            }
+//        }
     }
 
     public static class Builder {
 
-        private HardwareManager manager;
-        private List<Path> paths = new ArrayList<>();
+        private final HardwareManager manager;
+        private final ArrayList<PipelineStep> steps;
 
         public Builder(HardwareManager manager) {
             this.manager = manager;
+            steps = new ArrayList<>();
+        }
+
+        public Builder addAction(Action action) {
+            steps.add(new PipelineStep(action));
+            return this;
         }
 
         public Builder addCurvedPath(Position... positions) {
             for (Position position : positions) {
                 position.t *= Math.PI / 180;
             }
-            paths.add(Path.curved(positions));
+            steps.add(new PipelineStep(Path.curved(positions)));
             return this;
         }
 
         public Builder addLinearPath(Position... positions) {
-            paths.add(Path.linear(positions));
+            steps.add(new PipelineStep(Path.linear(positions)));
             return this;
         }
 
         public Pipeline build() {
-            return new Pipeline(manager, paths);
+            return new Pipeline(manager, steps);
         }
     }
 

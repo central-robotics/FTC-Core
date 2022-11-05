@@ -14,22 +14,6 @@ public class ActionManager {
     {
     }
 
-    public void addAction(Action action)
-    {
-        if (actions.containsKey(action.getIndex())) {
-            LinkedList<Action> actionList = actions.get(action.getIndex());
-            for (int i = 0; i < actionList.size(); i++) {
-                if (actionList.get(i).getIndex() > action.getIndex()) {
-                    actionList.add(i, action);
-                }
-            }
-        } else {
-            LinkedList<Action> actionList = new LinkedList<>();
-            actionList.add(action);
-            actions.put(action.getIndex(), actionList);
-        }
-    }
-
     public void addContinuousAction(ContinuousAction continuousAction) {
         continuousActions.add(continuousAction);
     }

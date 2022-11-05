@@ -115,6 +115,18 @@ public class Config {
         }
 
         /**
+         * Calculates distance per tick for accurate autonomous movement. If this is not done correct, robot will still navigate,
+         * but distances will not be accurate.
+         * @param encoderRes the resolution of the motor encoder. Usually found on website
+         * @param wheelDiameterMM the diameter of the wheel in mm;
+         */
+        public Builder setWheelProperties(double encoderRes, int wheelDiameterMM)
+        {
+            //TODO
+            return this;
+        }
+
+        /**
          Derives a robot configuration from the configuration builder.
          */
         public Config build() {
