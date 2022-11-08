@@ -43,19 +43,18 @@ public class Drive {
             double rot_power;
             Orientation gyro_angles;
 
-
             joystick_y = gamepad1.left_stick_y > 0 ? Math.pow(gamepad1.left_stick_y, 2) :
                     -Math.pow(gamepad1.left_stick_y, 2);
             joystick_x = (gamepad1.left_stick_x == 0) ? 0.000001 :
                     (gamepad1.left_stick_x > 0 ? Math.pow(gamepad1.left_stick_x, 2) :
                             -Math.pow(gamepad1.left_stick_x, 2));
 
-            rot_power = 0.4 * (gamepad1.right_stick_x);
+            rot_power = (gamepad1.right_stick_x);
 
             joystick_power = Math.sqrt(Math.pow(joystick_x, 2) + Math.pow(joystick_y, 2));
 
             gyro_angles = manager.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS);
-            theta = gyro_angles.firstAngle;
+            theta = gyro_angles.firstAngle - manager.IMUReset;
 
             orientation = (joystick_x > 0) ? (Math.atan(-joystick_y / joystick_x) - Math.PI / 4) - theta :
                     (Math.atan(-joystick_y / joystick_x) + Math.PI - Math.PI / 4) - theta;
@@ -70,10 +69,10 @@ public class Drive {
 
     public void move(double posinput, double neginput, double rotinput)
     {
-        manager.getLeftFrontMotor().setPower(-posinput-rotinput);
-        manager.getRightFrontMotor().setPower(neginput-rotinput);
-        manager.getLeftBackMotor().setPower(-neginput-rotinput);
-        manager.getRightBackMotor().setPower(posinput-rotinput);
+        manager.getLeftFrontMotor().setPower((manager.linearSpeed * -posinput) - (manager.rotSpeed *rotinput));
+        manager.getRightFrontMotor().setPower((manager.linearSpeed * neginput) - (manager.rotSpeed *rotinput));
+        manager.getLeftBackMotor().setPower((manager.linearSpeed * -neginput)- (manager.rotSpeed *rotinput));
+        manager.getRightBackMotor().setPower((manager.linearSpeed * posinput)- (manager.rotSpeed *rotinput));
     }
 
     private void performDriveAction(Gamepad gamepad)
@@ -116,6 +115,7 @@ public class Drive {
 
     public void runDriveLoop() {
         driveLoop();
+
     }
 
     public static class Builder

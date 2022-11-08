@@ -1,7 +1,6 @@
 package com.chsrobotics.ftccore.pipeline;
 
 import com.chsrobotics.ftccore.actions.Action;
-import com.chsrobotics.ftccore.actions.ActionManager;
 import com.chsrobotics.ftccore.engine.localization.LocalizationEngine;
 import com.chsrobotics.ftccore.engine.navigation.NavigationEngine;
 import com.chsrobotics.ftccore.engine.navigation.path.Path;
@@ -9,18 +8,15 @@ import com.chsrobotics.ftccore.geometry.Position;
 import com.chsrobotics.ftccore.hardware.HardwareManager;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class Pipeline {
 
     private HardwareManager manager;
     private ArrayList<PipelineStep> steps;
-    private ActionManager actionManager;
 
     private Pipeline(HardwareManager manager, ArrayList<PipelineStep> steps) {
         this.manager = manager;
         this.steps = steps;
-        actionManager = new ActionManager();
     }
 
     public void execute() {
@@ -39,26 +35,12 @@ public class Pipeline {
                         navigationEngine.navigateInALinearFashion(step.path.positions.get(i));
                     }
                 }
-
-//                Path lastPath = paths.get(paths.size() - 1);
-//                Position lastPos = lastPath.positions.get(lastPath.positions.size() - 1);
-//                navigationEngine.navigateInALinearFashion(lastPos);
             } else
             {
                 assert step.action != null;
                 step.action.execute();
             }
         }
-//        for (Path path : paths)
-//        {
-//            if (!path.isCurved)
-//            {
-//                for (int i = 0; i < path.positions.size(); i++)
-//                {
-//                    navigationEngine.navigateInALinearFashion(path.positions.get(i));
-//                }
-//            }
-//        }
     }
 
     public static class Builder {

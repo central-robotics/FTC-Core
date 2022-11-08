@@ -12,6 +12,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class LocalizationEngine {
+    /*
+    The localization engine can be used by actions or anywhere else across the system. It is responsible for fusing the
+    inputs of the different localizers using a Kalman filter into a more accurate output.
+    */
+
     public Position currentPosition = new Position(0, 0, 0);
     public Position lastPosition = new Position(0, 0, 0);
 
@@ -26,6 +31,10 @@ public class LocalizationEngine {
         initializeLocalization();
     }
 
+    /**
+     * Computes position of robot through a Kalman filter.
+     * @return Current position of the robot in X, Y, and T (radians)
+     */
     public Position getCurrentPosition()
     {
         //Kalman filter

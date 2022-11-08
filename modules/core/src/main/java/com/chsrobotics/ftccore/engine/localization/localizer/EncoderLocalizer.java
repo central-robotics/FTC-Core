@@ -10,6 +10,12 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 
 public class EncoderLocalizer extends Localizer{
 
+    /*
+    Encoder localization is different from DeadWheelLocalizer. Instead of using odometry pods, encoder localization utilizes
+    the motor encoders on the four drive motors that are used to drive the 4 wheels on the robot. While this is slightly less
+    accurate than pods, this method is still good for teams that do not have pods.
+    */
+
     HardwareManager hardware;
 
     private int lastLfPos, lastRfPos, lastRbPos, lastLbPos;

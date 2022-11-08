@@ -15,6 +15,7 @@ public class Config {
     public PIDCoefficients linearCoeffs;
     public PIDCoefficients rotCoeffs;
     public LinearOpMode opMode;
+    private double linearSpeed = 1, rotSpeed = 1;
 
     public boolean debugMode;
 
@@ -26,6 +27,7 @@ public class Config {
         private PIDCoefficients linearCoeffs;
         private PIDCoefficients rotCoeffs;
         private LinearOpMode opMode;
+        private double linearSpeed = 1, rotSpeed = 1;
 
         private boolean debugMode;
 
@@ -127,6 +129,18 @@ public class Config {
         }
 
         /**
+         * Tunes tele-op power multipliers.
+         * @param linearSpeed How fast the robot will move on the X, Y axis (0-1)
+         * @param rotSpeed How fast the robot will move rotationally (0-1)
+         */
+        public Builder setTeleopValues(double linearSpeed, double rotSpeed)
+        {
+            this.linearSpeed = linearSpeed;
+            this.rotSpeed = rotSpeed;
+            return this;
+        }
+
+        /**
          Derives a robot configuration from the configuration builder.
          */
         public Config build() {
@@ -139,6 +153,8 @@ public class Config {
             config.rotCoeffs = rotCoeffs;
             config.opMode = opMode;
             config.debugMode = debugMode;
+            config.linearSpeed = linearSpeed;
+            config.rotSpeed = rotSpeed;
 
             return config;
         }

@@ -54,6 +54,9 @@ public class HardwareManager {
      */
     public LinearOpMode opMode;
 
+    public double linearSpeed = 1, rotSpeed = 1;
+    public double IMUReset = 0;
+
     public boolean imuLocalEnabled = true;
 
     /**
@@ -68,7 +71,9 @@ public class HardwareManager {
         initializeDriveMotors(config);
         initializeIMU(config);
         initializeAccessories(config);
-        initializePID(config);
+        if (config.linearCoeffs != null && config.rotCoeffs != null)
+            initializePID(config);
+
         initializeLinearOpMode(config);
     }
 
@@ -169,13 +174,20 @@ public class HardwareManager {
         }
     }
 
+    /**
+     * Checks to see if navigation by drive motor encoders is enabled.
+     */
     public boolean isNavEnabled() {
         return driveMotors != null;
     }
 
+    /**
+     * Checks to see if navigation by IMU is enabled.
+     */
     public boolean isImuLocalEnabled() {
         return imu != null;
     }
+
     private void initializePID(Config config)
     {
         linearCtrler = new PID(config.linearCoeffs);
