@@ -1,17 +1,20 @@
 package com.chsrobotics.ftccore.engine.navigation;
 
 import com.chsrobotics.ftccore.engine.localization.LocalizationEngine;
+import com.chsrobotics.ftccore.engine.navigation.path.ParametricSpline;
 import com.chsrobotics.ftccore.geometry.Position;
 import com.chsrobotics.ftccore.hardware.HardwareManager;
 import com.chsrobotics.ftccore.engine.navigation.control.*;
 import com.chsrobotics.ftccore.utilities.MathUtil;
+
+import java.util.List;
 
 public class NavigationEngine {
     private final HardwareManager hardware;
     public final LocalizationEngine localization;
     private final PID linearController;
     private final PID rotationController;
-    private final SplineController splineController;
+    private final SplineHelper splineHelper;
     public Position position = new Position();
     double t;
     double magnitude;
@@ -26,7 +29,7 @@ public class NavigationEngine {
         this.linearController = hardware.linearCtrler;
         this.rotationController = hardware.rotCtrler;
 
-        splineController = new SplineController();
+        splineHelper = new SplineHelper();
     }
 
     private boolean isTargetReached(Position destination)
@@ -77,7 +80,7 @@ public class NavigationEngine {
             hardware.opMode.telemetry.update();
         }
 
-        while (!isTargetReached(destination) &&  !hardware.opMode.isStopRequested())
+        while (!isTargetReached(destination) && !hardware.opMode.isStopRequested())
         {
             position = localization.getCurrentPosition();
 
@@ -110,5 +113,41 @@ public class NavigationEngine {
         }
         linearController.resetSum();
         rotationController.resetSum();
+    }
+
+    public void navigateInANonLinearFashion(List<Position> positions)
+    {
+        double distTraveled = 0;
+        Position lastPosition = localization.getCurrentPosition();
+        ParametricSpline spline = splineHelper.computeSpline(List<Position> positions);
+
+        while (!isTargetReached(positions.get(positions.size() - 1)))
+        {
+            position = localization.getCurrentPosition();
+
+            double t, orientation, negOutput, posOutput;
+
+            distTraveled += Math.sqrt(Math.pow(position.x - lastPosition.x, 2) + Math.pow(position.y - lastPosition.y, 2));
+
+
+            magnitude = linearController.getOutput(error, 0);
+
+            negOutput = magnitude * Math.sin(orientation);
+
+            if (orientation == 0) {
+                posOutput = negOutput;
+            } else {
+                posOutput = magnitude * Math.cos(orientation);
+            }
+
+            double thetaOutput = rotationController.getOutput(Math.abs(thetaError), 0);
+
+            lastPosition = position;
+
+            hardware.getLeftFrontMotor().setVelocity((-posOutput) - ((isCounterClockwise ? -1 : 1) * thetaOutput));
+            hardware.getRightFrontMotor().setVelocity(( negOutput) - ((isCounterClockwise ? -1 : 1) * thetaOutput));
+            hardware.getLeftBackMotor().setVelocity((-negOutput) - ((isCounterClockwise ? -1 : 1) * thetaOutput));
+            hardware.getRightBackMotor().setVelocity((posOutput) - ((isCounterClockwise ? -1 : 1) * thetaOutput));
+        }
     }
 }
