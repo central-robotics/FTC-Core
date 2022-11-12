@@ -5,30 +5,36 @@ import org.apache.commons.math3.analysis.polynomials.PolynomialSplineFunction;
 public class ParametricSpline {
     public PolynomialSplineFunction xSpline;
     public PolynomialSplineFunction ySpline;
-    private final PolynomialSplineFunction xPrimet;
-    private final PolynomialSplineFunction yPrimet;
+    public final PolynomialSplineFunction dx;
+    public final PolynomialSplineFunction dy;
     public final double splineDistance;
     public final double[] secantDistances;
+    public final double arcLength;
 
-    public ParametricSpline(PolynomialSplineFunction f0, PolynomialSplineFunction f1, double dist, double[] distances)
+    public ParametricSpline(PolynomialSplineFunction f0, PolynomialSplineFunction f1, double dist, double[] distances, double arcLength)
     {
 
         xSpline = f0;
         ySpline = f1;
-        xPrimet = xSpline.polynomialSplineDerivative();
-        yPrimet = ySpline.polynomialSplineDerivative();
+        dx = xSpline.polynomialSplineDerivative();
+        dy = ySpline.polynomialSplineDerivative();
         splineDistance = dist;
         secantDistances = distances;
+        this.arcLength = arcLength;
     }
 
     public double getDerivative(double t)
     {
-        return yPrimet.value(t) / xPrimet.value(t);
+        return dy.value(t) / dx.value(t);
     }
 
     public double getCurvature(double t)
     {
-        return (Math.abs((xPrimet.value(t)*yPrimet.polynomialSplineDerivative().value(t))
-                - (yPrimet.value(t) * xPrimet.derivative().value(t))))/(Math.pow(Math.pow(xPrimet.value(t), 2) + Math.pow(yPrimet.value(t), 2), 3/2));
+        return (Math.abs((dx.value(t)* dy.polynomialSplineDerivative().value(t))
+                - (dy.value(t) * dx.derivative().value(t))))/(Math.pow(Math.pow(dx.value(t), 2) + Math.pow(dy.value(t), 2), 3d/2));
+    }
+
+    public double getT(double distAlongCurve) {
+        return distAlongCurve / arcLength;
     }
 }

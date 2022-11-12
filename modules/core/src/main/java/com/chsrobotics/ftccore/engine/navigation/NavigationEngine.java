@@ -119,9 +119,9 @@ public class NavigationEngine {
     {
         double distTraveled = 0;
         Position lastPosition = localization.getCurrentPosition();
-        ParametricSpline spline = splineHelper.computeSpline(List<Position> positions);
+        ParametricSpline spline = splineHelper.computeSpline(positions);
 
-        while (!isTargetReached(positions.get(positions.size() - 1)))
+        while (!isTargetReached(positions.get(positions.size() - 1)) && t < 1 && !hardware.opMode.isStopRequested())
         {
             position = localization.getCurrentPosition();
 
@@ -130,8 +130,15 @@ public class NavigationEngine {
             distTraveled += Math.sqrt(Math.pow(position.x - lastPosition.x, 2) + Math.pow(position.y - lastPosition.y, 2));
 
 
-            magnitude = linearController.getOutput(error, 0);
+            t = spline.getT(distTraveled);
+            magnitude = 1000 * Math.sqrt(Math.pow(spline.dx.value(t), 2) + Math.pow(spline.dy.value(t), 2)); //Math.min(10, 1/(t+0.01));
+//            magnitude = linearController.getOutput(error, 0);
 
+
+            if (spline.dx.value(t) > 0)
+                orientation = Math.atan(spline.getDerivative(t)) - Math.PI / 4 - position.t;
+            else
+                orientation = Math.atan(spline.getDerivative(t)) + Math.PI - Math.PI / 4 - position.t;
             negOutput = magnitude * Math.sin(orientation);
 
             if (orientation == 0) {
@@ -143,6 +150,15 @@ public class NavigationEngine {
             double thetaOutput = rotationController.getOutput(Math.abs(thetaError), 0);
 
             lastPosition = position;
+            hardware.opMode.telemetry.addData("t", t);
+            hardware.opMode.telemetry.addData("dx", spline.dx.value(t));
+            hardware.opMode.telemetry.addData("dy", spline.dy.value(t));
+            hardware.opMode.telemetry.addData("magnitude", magnitude);
+            hardware.opMode.telemetry.addData("arc length", spline.arcLength);
+            hardware.opMode.telemetry.addData("dist traveled", distTraveled);
+            hardware.opMode.telemetry.addData("pos", posOutput);
+            hardware.opMode.telemetry.addData("neg", negOutput);
+            hardware.opMode.telemetry.update();
 
             hardware.getLeftFrontMotor().setVelocity((-posOutput) - ((isCounterClockwise ? -1 : 1) * thetaOutput));
             hardware.getRightFrontMotor().setVelocity(( negOutput) - ((isCounterClockwise ? -1 : 1) * thetaOutput));
