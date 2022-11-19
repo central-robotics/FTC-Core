@@ -28,12 +28,13 @@ public class Pipeline {
             if (step.type == PipelineStep.StepType.navigation)
             {
                 assert step.path != null;
-                if (!step.path.isCurved)
-                {
-                    for (int i = 0; i < step.path.positions.size(); i++)
-                    {
+                if (!step.path.isCurved) {
+                    for (int i = 0; i < step.path.positions.size(); i++) {
                         navigationEngine.navigateInALinearFashion(step.path.positions.get(i));
                     }
+                } else
+                {
+                    navigationEngine.navigateInANonLinearFashion(step.path.positions);
                 }
             } else
             {
@@ -59,9 +60,6 @@ public class Pipeline {
         }
 
         public Builder addCurvedPath(Position... positions) {
-            for (Position position : positions) {
-                position.t *= Math.PI / 180;
-            }
             steps.add(new PipelineStep(Path.curved(positions)));
             return this;
         }
