@@ -15,17 +15,21 @@ public class Drive {
     private final HardwareManager manager;
     private final ArrayList<DriveAction> actions;
     private long prevTime = System.currentTimeMillis();
+    private final UserDriveLoop loop;
 
-    public Drive (HardwareManager manager, ArrayList<DriveAction> actions)
+    public Drive (HardwareManager manager, ArrayList<DriveAction> actions, UserDriveLoop loop)
     {
         this.manager = manager;
         this.actions = actions;
+        this.loop = loop;
     }
 
     private void driveLoop()
     {
         while (!manager.opMode.isStopRequested())
         {
+            loop.loop();
+
             prevTime = System.currentTimeMillis();
 
             performDriveAction(manager.opMode.gamepad1);
@@ -102,13 +106,43 @@ public class Drive {
                 action.action.execute();
             if (gamepad.dpad_up && action.bindedButton == Builder.GamepadButtons.DPUP && action.gamepad == gp)
                 action.action.execute();
-            if (gamepad.dpad_left && action.bindedButton == Builder.GamepadButtons.RB && action.gamepad == gp)
+            if (gamepad.right_bumper && action.bindedButton == Builder.GamepadButtons.RB && action.gamepad == gp)
                 action.action.execute();
-            if (gamepad.dpad_down && action.bindedButton == Builder.GamepadButtons.LB && action.gamepad == gp)
+            if (gamepad.left_bumper && action.bindedButton == Builder.GamepadButtons.LB && action.gamepad == gp)
                 action.action.execute();
-            if (gamepad.dpad_right && action.bindedButton == Builder.GamepadButtons.RT && action.gamepad == gp)
+            if (gamepad.right_trigger > 0.001 && action.bindedButton == Builder.GamepadButtons.RT && action.gamepad == gp)
                 action.action.execute();
-            if (gamepad.dpad_up && action.bindedButton == Builder.GamepadButtons.LT && action.gamepad == gp)
+            if (gamepad.left_trigger > 0.001 && action.bindedButton == Builder.GamepadButtons.LT && action.gamepad == gp)
+                action.action.execute();
+            if (!gamepad.a && action.bindedButton == Builder.GamepadButtons.A && action.gamepad == gp && !action.actuation)
+                action.action.execute();
+            if (!gamepad.b && action.bindedButton == Builder.GamepadButtons.B && action.gamepad == gp && !action.actuation)
+                action.action.execute();
+            if (!gamepad.y && action.bindedButton == Builder.GamepadButtons.Y && action.gamepad == gp && !action.actuation)
+                action.action.execute();
+            if (!gamepad.x && action.bindedButton == Builder.GamepadButtons.X && action.gamepad == gp && !action.actuation)
+                action.action.execute();
+            if (!gamepad.triangle && action.bindedButton == Builder.GamepadButtons.Triangle && action.gamepad == gp && !action.actuation)
+                action.action.execute();
+            if (!gamepad.cross && action.bindedButton == Builder.GamepadButtons.Cross && action.gamepad == gp && !action.actuation)
+                action.action.execute();
+            if (!gamepad.circle && action.bindedButton == Builder.GamepadButtons.Circle && action.gamepad == gp && !action.actuation)
+                action.action.execute();
+            if (!gamepad.dpad_left && action.bindedButton == Builder.GamepadButtons.DPLEFT && action.gamepad == gp && !action.actuation)
+                action.action.execute();
+            if (!gamepad.dpad_down && action.bindedButton == Builder.GamepadButtons.DPDOWN && action.gamepad == gp && !action.actuation)
+                action.action.execute();
+            if (!gamepad.dpad_right && action.bindedButton == Builder.GamepadButtons.DPRIGHT && action.gamepad == gp && !action.actuation)
+                action.action.execute();
+            if (!gamepad.dpad_up && action.bindedButton == Builder.GamepadButtons.DPUP && action.gamepad == gp && !action.actuation)
+                action.action.execute();
+            if (!gamepad.right_bumper && action.bindedButton == Builder.GamepadButtons.RB && action.gamepad == gp && !action.actuation)
+                action.action.execute();
+            if (!gamepad.left_bumper && action.bindedButton == Builder.GamepadButtons.LB && action.gamepad == gp && !action.actuation)
+                action.action.execute();
+            if (!(gamepad.right_trigger > 0.001) && action.bindedButton == Builder.GamepadButtons.RT && action.gamepad == gp && !action.actuation)
+                action.action.execute();
+            if (!(gamepad.left_trigger > 0.001) && action.bindedButton == Builder.GamepadButtons.LT && action.gamepad == gp && !action.actuation)
                 action.action.execute();
         }
     }
@@ -122,6 +156,7 @@ public class Drive {
     {
         private final HardwareManager manager;
         private final ArrayList<DriveAction> actions;
+        private UserDriveLoop loop;
 
         public Builder(HardwareManager manager)
         {
@@ -129,15 +164,21 @@ public class Drive {
             this.manager = manager;
         }
 
-        public Builder bindActionToButton(GamepadButtons button, Action action, int gamepad)
+        public Builder bindActionToButton(GamepadButtons button, Action action, int gamepad, boolean actuation)
         {
-            actions.add(new DriveAction(action, button, gamepad));
+            actions.add(new DriveAction(action, button, gamepad, actuation));
+            return this;
+        }
+
+        public Builder addUserLoop(UserDriveLoop loop)
+        {
+            this.loop = loop;
             return this;
         }
 
         public Drive Build()
         {
-            return new Drive(manager, actions);
+            return new Drive(manager, actions, loop);
         }
 
         public enum GamepadButtons
