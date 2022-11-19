@@ -49,22 +49,7 @@ public class SplineController
 
     public double getArcLength(Position p0, Position p1, Position p2, Position p3)
     {
-        Position nextPos = getPositionVector(p0, p1, p2, p3, 0);
-        Position pos = getPositionVector(p0, p1, p2, p3, 0);
-        double deltaX, deltaY, l = 0;
 
-        for (int i = 1; i < 2001; i++)
-        {
-            deltaX = nextPos.x - pos.x;
-            deltaY = nextPos.y - pos.y;
-
-            pos = nextPos;
-            nextPos = getPositionVector(p0, p1, p2, p3, i/2000d);
-
-            l += Math.sqrt((deltaX * deltaX) + (deltaY * deltaY));
-        }
-
-        return l;
     }
 
     // Returns an approximation of the value t which when passed to the position function would return the robot's current position.
