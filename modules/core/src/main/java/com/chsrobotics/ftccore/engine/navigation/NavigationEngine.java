@@ -133,11 +133,12 @@ public class NavigationEngine {
 
             double orientation, negOutput, posOutput;
 
-            distTraveled += Math.sqrt(Math.pow(position.x - lastPosition.x, 2) + Math.pow(position.y - lastPosition.y, 2));
+            distTraveled += Math.sqrt(Math.pow(position.x - lastPosition.x, 2) + Math.pow(position.y - lastPosition.y, 2)) / 1.2;
 
             t = distTraveled / spline.splineDistance;
-//            magnitude = 1000 * Math.sqrt(Math.pow(spline.dx.value(t), 2) + Math.pow(spline.dy.value(t), 2)); //Math.min(10, 1/(t+0.01));
-//            magnitude = linearController.getOutput(error, 0);
+
+            if (t >= 1)
+                break;
 
             if (spline.xSpline.derivative().value(t) > 0)
                 orientation = Math.atan(spline.getDerivative(t)) - Math.PI / 4 - position.t;
@@ -165,6 +166,19 @@ public class NavigationEngine {
             hardware.getRightFrontMotor().setVelocity(( negOutput) - ((isCounterClockwise ? -1 : 1) * thetaOutput));
             hardware.getLeftBackMotor().setVelocity((-negOutput) - ((isCounterClockwise ? -1 : 1) * thetaOutput));
             hardware.getRightBackMotor().setVelocity((posOutput) - ((isCounterClockwise ? -1 : 1) * thetaOutput));
+        }
+        navigateInALinearFashion(positions.get(positions.size() - 1));
+
+        hardware.getLeftFrontMotor().setVelocity(0);
+        hardware.getRightFrontMotor().setVelocity(0);
+        hardware.getLeftBackMotor().setVelocity(0);
+        hardware.getRightBackMotor().setVelocity(0);
+
+        while (!hardware.opMode.isStopRequested())
+        {
+            hardware.opMode.telemetry.addData("Short by (absolute)", Math.sqrt(Math.pow(positions.get(positions.size() - 1).x - position.x, 2) + Math.sqrt(Math.pow(positions.get(positions.size() - 1).y - position.y, 2))));
+            hardware.opMode.telemetry.addData("Short by (ratio)", Math.sqrt(Math.pow(positions.get(positions.size() - 1).x - position.x, 2) + Math.sqrt(Math.pow(positions.get(positions.size() - 1).y - position.y, 2))) / spline.splineDistance);
+            hardware.opMode.telemetry.update();
         }
     }
 }
