@@ -7,8 +7,6 @@ import com.chsrobotics.ftccore.engine.navigation.control.*;
 
 import java.util.List;
 
-import umontreal.ssj.functionfit.BSpline;
-
 public class NavigationEngine {
     private final HardwareManager hardware;
     public final LocalizationEngine localization;
@@ -119,14 +117,15 @@ public class NavigationEngine {
 
         double[] x = new double[positions.size()];
         double[] y = new double[positions.size()];
+
         for (int i = 0; i < positions.size(); i++) {
             x[i] = positions.get(i).x;
             y[i] = positions.get(i).y;
         }
 
-        BSpline spline = BSpline.createInterpBSpline(x, y, 3);
-        BSpline theChangeInSplineWithRespectToT = spline.derivativeBSpline(1);
-        double arcLength = spline.integral(0, 1);
+        SplineHelper splineHelper = new SplineHelper();
+
+        ParametricSpline spline = splineHelper.computeSpline(x, y);
 
         while (!isTargetReached(positions.get(positions.size() - 1)) && t < 1 && !hardware.opMode.isStopRequested())
         {
@@ -136,14 +135,14 @@ public class NavigationEngine {
 
             distTraveled += Math.sqrt(Math.pow(position.x - lastPosition.x, 2) + Math.pow(position.y - lastPosition.y, 2));
 
-            t = distTraveled / arcLength;
+            t = distTraveled / spline.splineDistance;
 //            magnitude = 1000 * Math.sqrt(Math.pow(spline.dx.value(t), 2) + Math.pow(spline.dy.value(t), 2)); //Math.min(10, 1/(t+0.01));
 //            magnitude = linearController.getOutput(error, 0);
 
-            if (theChangeInSplineWithRespectToT.evalX(t) > 0)
-                orientation = Math.atan(theChangeInSplineWithRespectToT.evalY(t) / theChangeInSplineWithRespectToT.evalX(t)) - Math.PI / 4 - position.t;
+            if (spline.xSpline.derivative().value(t) > 0)
+                orientation = Math.atan(spline.getDerivative(t)) - Math.PI / 4 - position.t;
             else
-                orientation = Math.atan(theChangeInSplineWithRespectToT.evalY(t) / theChangeInSplineWithRespectToT.evalX(t)) + Math.PI - Math.PI / 4 - position.t;
+                orientation = Math.atan(spline.getDerivative(t)) + Math.PI - Math.PI / 4 - position.t;
             negOutput = 1000 * Math.sin(orientation);
 
             if (orientation == 0) {
