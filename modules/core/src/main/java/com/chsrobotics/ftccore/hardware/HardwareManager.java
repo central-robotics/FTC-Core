@@ -83,7 +83,7 @@ public class HardwareManager {
         for (int i = 0; i < 4; i++)
         {
             driveMotors[i] = (DcMotorEx) hardwareMap.dcMotor.get(config.driveMotors[i]);
-            driveMotors[i].setDirection(DcMotorSimple.Direction.FORWARD);
+            driveMotors[i].setDirection(DcMotorSimple.Direction.REVERSE);
             driveMotors[i].setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
             driveMotors[i].setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -210,4 +210,6 @@ public class HardwareManager {
         return driveMotors[2];
     }
     public DcMotorEx getLeftBackMotor() { return driveMotors[3]; }
+    public DcMotorEx getLiftMotor() { return accessoryMotors[0]; }
+    public WebcamName getWebcam() { return accessoryCameras[0]; }
 }

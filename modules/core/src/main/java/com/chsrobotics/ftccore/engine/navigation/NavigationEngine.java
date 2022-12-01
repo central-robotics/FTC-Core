@@ -27,7 +27,7 @@ public class NavigationEngine {
         this.rotationController = hardware.rotCtrler;
     }
 
-    private boolean isTargetReached(Position destination)
+    public boolean isTargetReached(Position destination)
     {
         error = Math.sqrt(Math.pow(destination.y - position.y, 2) + Math.pow(destination.x - position.x, 2));
         thetaError = destination.t - position.t;
@@ -67,7 +67,7 @@ public class NavigationEngine {
 
     public void navigateInALinearFashion(Position destination)
     {
-        while (hardware.debugMode) {
+        if (hardware.debugMode) {
             position = localization.getCurrentPosition();
             hardware.opMode.telemetry.addData("X", position.x);
             hardware.opMode.telemetry.addData("Y", position.y);
@@ -75,39 +75,34 @@ public class NavigationEngine {
             hardware.opMode.telemetry.update();
         }
 
-        while (!isTargetReached(destination) && !hardware.opMode.isStopRequested())
-        {
-            position = localization.getCurrentPosition();
+        position = localization.getCurrentPosition();
 
-            double orientation, negOutput, posOutput;
+        double orientation, negOutput, posOutput;
 
-            if (destination.x - position.x > 0)
-                orientation = Math.atan(linearController.getSlope(destination, position)) - Math.PI / 4 - position.t;
-            else if (destination.x - position.x < 0)
-                orientation = Math.atan(linearController.getSlope(destination, position)) + Math.PI - Math.PI / 4 - position.t;
-            else
-                orientation = Math.PI / 2;
+        if (destination.x - position.x > 0)
+            orientation = Math.atan(linearController.getSlope(destination, position)) - Math.PI / 4 - position.t;
+        else if (destination.x - position.x < 0)
+            orientation = Math.atan(linearController.getSlope(destination, position)) + Math.PI - Math.PI / 4 - position.t;
+        else
+            orientation = Math.PI / 2;
 
-            magnitude = linearController.getOutput(error, 0);
+        magnitude = linearController.getOutput(error, 0);
 
-            negOutput = magnitude * Math.sin(orientation);
+        negOutput = magnitude * Math.sin(orientation);
 
-            if (orientation == 0) {
-                posOutput = negOutput;
-            } else {
-                posOutput = magnitude * Math.cos(orientation);
-            }
-
-            double thetaOutput = rotationController.getOutput(Math.abs(thetaError), 0);
-
-
-            hardware.getLeftFrontMotor().setVelocity((-posOutput) - ((isCounterClockwise ? -1 : 1) * thetaOutput));
-            hardware.getRightFrontMotor().setVelocity(( negOutput) - ((isCounterClockwise ? -1 : 1) * thetaOutput));
-            hardware.getLeftBackMotor().setVelocity((-negOutput) - ((isCounterClockwise ? -1 : 1) * thetaOutput));
-            hardware.getRightBackMotor().setVelocity((posOutput) - ((isCounterClockwise ? -1 : 1) * thetaOutput));
+        if (orientation == 0) {
+            posOutput = negOutput;
+        } else {
+            posOutput = magnitude * Math.cos(orientation);
         }
-        linearController.resetSum();
-        rotationController.resetSum();
+
+        double thetaOutput = rotationController.getOutput(Math.abs(thetaError), 0);
+
+
+        hardware.getLeftFrontMotor().setVelocity((-posOutput) - ((isCounterClockwise ? -1 : 1) * thetaOutput));
+        hardware.getRightFrontMotor().setVelocity(( negOutput) - ((isCounterClockwise ? -1 : 1) * thetaOutput));
+        hardware.getLeftBackMotor().setVelocity((-negOutput) - ((isCounterClockwise ? -1 : 1) * thetaOutput));
+        hardware.getRightBackMotor().setVelocity((posOutput) - ((isCounterClockwise ? -1 : 1) * thetaOutput));
     }
 
     public void navigateInANonLinearFashion(List<Position> positions)

@@ -1,22 +1,32 @@
 package com.chsrobotics.ftccore.pipeline;
 
 import com.chsrobotics.ftccore.actions.Action;
+import com.chsrobotics.ftccore.actions.ContinuousAction;
 import com.chsrobotics.ftccore.engine.localization.LocalizationEngine;
 import com.chsrobotics.ftccore.engine.navigation.NavigationEngine;
 import com.chsrobotics.ftccore.engine.navigation.path.Path;
 import com.chsrobotics.ftccore.geometry.Position;
 import com.chsrobotics.ftccore.hardware.HardwareManager;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class Pipeline {
 
     private HardwareManager manager;
     private ArrayList<PipelineStep> steps;
+    private ArrayList<ContinuousAction> continuousActions;
 
-    private Pipeline(HardwareManager manager, ArrayList<PipelineStep> steps) {
+    private Pipeline(HardwareManager manager, ArrayList<PipelineStep> steps, ArrayList<ContinuousAction> continuousActions) {
         this.manager = manager;
         this.steps = steps;
+        this.continuousActions = continuousActions;
+    }
+
+    private void runContinuousActions() {
+        for (ContinuousAction action : continuousActions) {
+            action.execute();
+        }
     }
 
     public void execute() {
@@ -29,8 +39,11 @@ public class Pipeline {
             {
                 assert step.path != null;
                 if (!step.path.isCurved) {
-                    for (int i = 0; i < step.path.positions.size(); i++) {
-                        navigationEngine.navigateInALinearFashion(step.path.positions.get(i));
+                    for (Position dest : step.path.positions) {
+                        while (navigationEngine.isTargetReached(dest)) {
+                            runContinuousActions();
+                            navigationEngine.navigateInALinearFashion(dest);
+                        }
                     }
                 } else
                 {
@@ -48,10 +61,12 @@ public class Pipeline {
 
         private final HardwareManager manager;
         private final ArrayList<PipelineStep> steps;
+        private final ArrayList<ContinuousAction> continuousActions;
 
         public Builder(HardwareManager manager) {
             this.manager = manager;
             steps = new ArrayList<>();
+            continuousActions = new ArrayList<>();
         }
 
         public Builder addAction(Action action) {
@@ -69,8 +84,14 @@ public class Pipeline {
             return this;
         }
 
+        public Builder addContinuousAction(ContinuousAction continuousAction)
+        {
+            continuousActions.add(continuousAction);
+            return this;
+        }
+
         public Pipeline build() {
-            return new Pipeline(manager, steps);
+            return new Pipeline(manager, steps, continuousActions);
         }
     }
 
