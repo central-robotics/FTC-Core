@@ -98,11 +98,14 @@ public class HardwareManager {
 
         imu = hardwareMap.get(BNO055IMU.class, config.imu);
 
-        BNO055IMU.Parameters params = new BNO055IMU.Parameters();
-        params.angleUnit = BNO055IMU.AngleUnit.RADIANS;
-        params.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
-
-        imu.initialize(params);
+        if (config.params == null)
+        {
+            BNO055IMU.Parameters params = new BNO055IMU.Parameters();
+            params.angleUnit = BNO055IMU.AngleUnit.RADIANS;
+            params.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+            imu.initialize(params);
+        } else
+            imu.initialize(config.params);
     }
 
     private void initializeAccessories(Config config)

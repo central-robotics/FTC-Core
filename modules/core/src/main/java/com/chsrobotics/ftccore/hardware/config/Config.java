@@ -1,6 +1,7 @@
 package com.chsrobotics.ftccore.hardware.config;
 
 import com.chsrobotics.ftccore.hardware.config.accessory.Accessory;
+import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.PIDCoefficients;
@@ -15,6 +16,7 @@ public class Config {
     public PIDCoefficients linearCoeffs;
     public PIDCoefficients rotCoeffs;
     public LinearOpMode opMode;
+    public BNO055IMU.Parameters params;
     private double linearSpeed = 1, rotSpeed = 1;
 
     public boolean debugMode;
@@ -28,6 +30,7 @@ public class Config {
         private PIDCoefficients rotCoeffs;
         private LinearOpMode opMode;
         private double linearSpeed = 1, rotSpeed = 1;
+        private BNO055IMU.Parameters params;
 
         private boolean debugMode;
 
@@ -128,6 +131,12 @@ public class Config {
             return this;
         }
 
+        public Builder setIMUSettings(BNO055IMU.Parameters params)
+        {
+            this.params = params;
+            return this;
+        }
+
         /**
          * Tunes tele-op power multipliers.
          * @param linearSpeed How fast the robot will move on the X, Y axis (0-1)
@@ -155,6 +164,7 @@ public class Config {
             config.debugMode = debugMode;
             config.linearSpeed = linearSpeed;
             config.rotSpeed = rotSpeed;
+            config.params = params;
 
             return config;
         }
