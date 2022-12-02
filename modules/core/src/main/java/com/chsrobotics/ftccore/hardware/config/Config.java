@@ -21,6 +21,7 @@ public class Config {
     private double linearSpeed = 1, rotSpeed = 1;
 
     public boolean debugMode;
+    public boolean useCV;
 
 
     public static class Builder {
@@ -36,6 +37,8 @@ public class Config {
         private BNO055IMU.Parameters params;
 
         private boolean debugMode;
+        private boolean useCV = false;
+
 
 
 
@@ -167,6 +170,12 @@ public class Config {
             return this;
         }
 
+        public Builder useCV()
+        {
+            useCV = true;
+            return this;
+        }
+
         /**
          Derives a robot configuration from the configuration builder.
          */
@@ -184,6 +193,7 @@ public class Config {
             config.rotSpeed = rotSpeed;
             config.params = params;
             config.offset = offset;
+            config.useCV = useCV;
 
             return config;
         }
