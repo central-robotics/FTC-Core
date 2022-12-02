@@ -40,7 +40,7 @@ public class Pipeline {
                 assert step.path != null;
                 if (!step.path.isCurved) {
                     for (Position dest : step.path.positions) {
-                        while (navigationEngine.isTargetReached(dest)) {
+                        while (!navigationEngine.isTargetReached(dest)) {
                             runContinuousActions();
                             navigationEngine.navigateInALinearFashion(dest);
                         }

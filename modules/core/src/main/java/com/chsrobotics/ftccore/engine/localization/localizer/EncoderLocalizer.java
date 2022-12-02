@@ -91,7 +91,7 @@ public class EncoderLocalizer extends Localizer{
         Position robotPosition = new Position();
         robotPosition.x = previousPosition.x - deltaXf;
         robotPosition.y = previousPosition.y - deltaYf;
-        robotPosition.t = theta;
+        robotPosition.t = theta - hardware.offset;
 
         if (robotPosition.x == 0) robotPosition.x = 0.0000001;
 
