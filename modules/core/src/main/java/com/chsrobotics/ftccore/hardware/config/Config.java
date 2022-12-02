@@ -40,8 +40,6 @@ public class Config {
         private boolean useCV = false;
 
 
-
-
         /**
          Creates a new instance of the ConfigBuilder for setting up the robot hardware.
          */

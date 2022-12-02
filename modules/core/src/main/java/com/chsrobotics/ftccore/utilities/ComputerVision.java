@@ -59,7 +59,7 @@ public class ComputerVision {
         }
 
         webcam.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
-        streaming = true;
+
 
     }
 
@@ -83,6 +83,7 @@ public class ComputerVision {
 
         @Override
         public Mat processFrame(Mat input) {
+            streaming = true;
             lastFrame = input;
             return null;
         }
