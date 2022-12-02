@@ -17,6 +17,7 @@ public class Config {
     public PIDCoefficients rotCoeffs;
     public LinearOpMode opMode;
     public BNO055IMU.Parameters params;
+    public double offset;
     private double linearSpeed = 1, rotSpeed = 1;
 
     public boolean debugMode;
@@ -25,10 +26,12 @@ public class Config {
     public static class Builder {
         private String[] driveMotors;
         private String imu;
+
         private ArrayList<Accessory> accessories;
         private PIDCoefficients linearCoeffs;
         private PIDCoefficients rotCoeffs;
         private LinearOpMode opMode;
+        private double offset = 0;
         private double linearSpeed = 1, rotSpeed = 1;
         private BNO055IMU.Parameters params;
 
@@ -131,9 +134,24 @@ public class Config {
             return this;
         }
 
+        /**
+         * Sets the imu parameters. Should be used based on where and how the REV control hub is oriented on the robot.
+         * @param params User specified BNO055IMU parameters. For extra information, read FTC documentation.
+         */
         public Builder setIMUSettings(BNO055IMU.Parameters params)
         {
             this.params = params;
+            return this;
+        }
+
+        /**
+         * If the orientation is inverted or modified in some way, IMUOffset will add a constant to add or subtract the calculated orientation
+         * of the robot.
+         * @param offset Offset value
+         */
+        public Builder setIMUOffset(double offset)
+        {
+            this.offset = offset;
             return this;
         }
 
@@ -165,6 +183,7 @@ public class Config {
             config.linearSpeed = linearSpeed;
             config.rotSpeed = rotSpeed;
             config.params = params;
+            config.offset = offset;
 
             return config;
         }

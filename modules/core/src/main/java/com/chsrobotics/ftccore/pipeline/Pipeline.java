@@ -49,10 +49,18 @@ public class Pipeline {
                 {
                     navigationEngine.navigateInANonLinearFashion(step.path.positions);
                 }
-            } else
+            } else if (step.type == PipelineStep.StepType.action)
             {
                 assert step.action != null;
                 step.action.execute();
+            } else if (step.type == PipelineStep.StepType.boolPair)
+            {
+                assert step.boolPair != null;
+
+                if (step.boolPair.bool.evaluateCondition()) {
+                    step.boolPair.pipeline.execute();
+                    break;
+                }
             }
         }
     }
@@ -87,6 +95,12 @@ public class Pipeline {
         public Builder addContinuousAction(ContinuousAction continuousAction)
         {
             continuousActions.add(continuousAction);
+            return this;
+        }
+
+        public Builder evaluateBool(EvaluableBoolean bool, Pipeline pipeline)
+        {
+            steps.add(new PipelineStep(new BooleanPair(pipeline, bool)));
             return this;
         }
 

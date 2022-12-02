@@ -19,6 +19,8 @@ public class HardwareManager {
      */
     public final HardwareMap hardwareMap;
 
+    public double offset = 0;
+
     /**
      * Four component array containing the four drive motors. Modifying this variable is extremely dangerous.
      */
@@ -93,6 +95,8 @@ public class HardwareManager {
 
     private void initializeIMU(Config config)
     {
+        offset = config.offset;
+
         if (!imuLocalEnabled)
             return;
 
