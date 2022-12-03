@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.Vector;
 
 public class Drive {
-    private final HardwareManager manager;
+    public final HardwareManager manager;
     private final ArrayList<DriveAction> actions;
     private long prevTime = System.currentTimeMillis();
     private final UserDriveLoop loop;
