@@ -49,11 +49,6 @@ public class LocalizationEngine {
         lastPosition = currentPosition;
         currentPosition = positions.get(0);
 
-        hardware.opMode.telemetry.addData("X", currentPosition.x);
-        hardware.opMode.telemetry.addData("Y", currentPosition.y);
-        hardware.opMode.telemetry.addData("T", currentPosition.t);
-        hardware.opMode.telemetry.update();
-
         return currentPosition; //Temporarily returning only encoder based position.
     }
 

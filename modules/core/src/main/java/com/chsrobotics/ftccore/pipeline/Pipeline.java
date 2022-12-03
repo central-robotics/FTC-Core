@@ -7,6 +7,7 @@ import com.chsrobotics.ftccore.engine.navigation.NavigationEngine;
 import com.chsrobotics.ftccore.engine.navigation.path.Path;
 import com.chsrobotics.ftccore.geometry.Position;
 import com.chsrobotics.ftccore.hardware.HardwareManager;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -29,7 +30,8 @@ public class Pipeline {
         }
     }
 
-    public void execute() {
+    public void execute()
+    {
         LocalizationEngine localization = new LocalizationEngine(manager);
         NavigationEngine navigationEngine = new NavigationEngine(localization, manager);
 
@@ -40,9 +42,9 @@ public class Pipeline {
                 assert step.path != null;
                 if (!step.path.isCurved) {
                     for (Position dest : step.path.positions) {
-                        while (navigationEngine.isTargetReached(dest)) {
-                            runContinuousActions();
+                        while (!navigationEngine.isTargetReached(dest) && !manager.opMode.isStopRequested()) {
                             navigationEngine.navigateInALinearFashion(dest);
+                            runContinuousActions();
                         }
                     }
                 } else
