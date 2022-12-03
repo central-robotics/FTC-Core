@@ -85,22 +85,12 @@ public class Pipeline {
         }
 
         public Builder addCurvedPath(Position... positions) {
-            for (Position pos : positions)
-            {
-                //pos.t -= manager.offset;
-                steps.add(new PipelineStep(Path.curved(pos)));
-
-            }
+            steps.add(new PipelineStep(Path.curved(positions)));
             return this;
         }
 
         public Builder addLinearPath(Position... positions) {
-            for (Position pos : positions)
-            {
-                //pos.t -= manager.offset;
-                steps.add(new PipelineStep(Path.linear(pos)));
-
-            }
+            steps.add(new PipelineStep(Path.linear(positions)));
             return this;
         }
 
