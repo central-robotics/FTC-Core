@@ -89,7 +89,7 @@ public class HardwareManager {
         for (int i = 0; i < 4; i++)
         {
             driveMotors[i] = (DcMotorEx) hardwareMap.dcMotor.get(config.driveMotors[i]);
-            driveMotors[i].setDirection(DcMotorSimple.Direction.FORWARD);
+            driveMotors[i].setDirection(DcMotorSimple.Direction.REVERSE);
             driveMotors[i].setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
             driveMotors[i].setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
