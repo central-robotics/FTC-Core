@@ -33,8 +33,11 @@ public class Drive {
 
             prevTime = System.currentTimeMillis();
 
-            performDriveAction(manager.opMode.gamepad1);
-            performDriveAction(manager.opMode.gamepad2);
+            for (DriveAction action : actions)
+            {
+                if (action.trigger)
+                    action.action.execute();
+            }
 
             Gamepad gamepad1 = manager.opMode.gamepad1;
 
@@ -48,11 +51,8 @@ public class Drive {
             double rot_power;
             Orientation gyro_angles;
 
-            joystick_y = gamepad1.left_stick_y > 0 ? Math.pow(gamepad1.left_stick_y, 2) :
-                    -Math.pow(gamepad1.left_stick_y, 2);
-            joystick_x = (gamepad1.left_stick_x == 0) ? 0.000001 :
-                    (gamepad1.left_stick_x > 0 ? Math.pow(gamepad1.left_stick_x, 2) :
-                            -Math.pow(gamepad1.left_stick_x, 2));
+            joystick_y = -gamepad1.left_stick_y;
+            joystick_x = (gamepad1.left_stick_x == 0) ? 0.000001 : -gamepad1.left_stick_x;
 
             rot_power = (gamepad1.right_stick_x);
 
@@ -61,8 +61,8 @@ public class Drive {
             gyro_angles = manager.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS);
             theta = gyro_angles.firstAngle - manager.IMUReset - manager.offset;
 
-            orientation = (joystick_x > 0) ? (Math.atan(-joystick_y / joystick_x) - Math.PI / 4) - theta :
-                    (Math.atan(-joystick_y / joystick_x) + Math.PI - Math.PI / 4) - theta;
+            orientation = (joystick_x > 0) ? (Math.atan(joystick_y / joystick_x) - Math.PI / 4) + theta :
+                    (Math.atan(joystick_y / joystick_x) + Math.PI - Math.PI / 4) + theta;
 
             negative_power = (joystick_power * Math.sin(orientation));
             positive_power = (orientation != 0) ? (joystick_power * Math.cos(orientation)) :
@@ -76,76 +76,8 @@ public class Drive {
     {
         manager.getLeftFrontMotor().setPower((manager.linearSpeed * -posinput) - (manager.rotSpeed *rotinput));
         manager.getRightFrontMotor().setPower((manager.linearSpeed * neginput) - (manager.rotSpeed *rotinput));
-        manager.getLeftBackMotor().setPower((manager.linearSpeed * -neginput)- (manager.rotSpeed *rotinput));
-        manager.getRightBackMotor().setPower((manager.linearSpeed * posinput)- (manager.rotSpeed *rotinput));
-    }
-
-    private void performDriveAction(Gamepad gamepad)
-    {
-        int gp = gamepad == manager.opMode.gamepad1 ? 1 : 2;
-        for (DriveAction action : actions)
-        {
-            if (gamepad.a && action.bindedButton == Builder.GamepadButtons.A && action.gamepad == gp)
-                action.action.execute();
-            if (gamepad.b && action.bindedButton == Builder.GamepadButtons.B && action.gamepad == gp)
-                action.action.execute();
-            if (gamepad.y && action.bindedButton == Builder.GamepadButtons.Y && action.gamepad == gp)
-                action.action.execute();
-            if (gamepad.x && action.bindedButton == Builder.GamepadButtons.X && action.gamepad == gp)
-                action.action.execute();
-            if (gamepad.triangle && action.bindedButton == Builder.GamepadButtons.Triangle && action.gamepad == gp)
-                action.action.execute();
-            if (gamepad.cross && action.bindedButton == Builder.GamepadButtons.Cross && action.gamepad == gp)
-                action.action.execute();
-            if (gamepad.circle && action.bindedButton == Builder.GamepadButtons.Circle && action.gamepad == gp)
-                action.action.execute();
-            if (gamepad.dpad_left && action.bindedButton == Builder.GamepadButtons.DPLEFT && action.gamepad == gp)
-                action.action.execute();
-            if (gamepad.dpad_down && action.bindedButton == Builder.GamepadButtons.DPDOWN && action.gamepad == gp)
-                action.action.execute();
-            if (gamepad.dpad_right && action.bindedButton == Builder.GamepadButtons.DPRIGHT && action.gamepad == gp)
-                action.action.execute();
-            if (gamepad.dpad_up && action.bindedButton == Builder.GamepadButtons.DPUP && action.gamepad == gp)
-                action.action.execute();
-            if (gamepad.right_bumper && action.bindedButton == Builder.GamepadButtons.RB && action.gamepad == gp)
-                action.action.execute();
-            if (gamepad.left_bumper && action.bindedButton == Builder.GamepadButtons.LB && action.gamepad == gp)
-                action.action.execute();
-            if (gamepad.right_trigger > 0.001 && action.bindedButton == Builder.GamepadButtons.RT && action.gamepad == gp)
-                action.action.execute();
-            if (gamepad.left_trigger > 0.001 && action.bindedButton == Builder.GamepadButtons.LT && action.gamepad == gp)
-                action.action.execute();
-            if (!gamepad.a && action.bindedButton == Builder.GamepadButtons.A && action.gamepad == gp && !action.actuation)
-                action.action.execute();
-            if (!gamepad.b && action.bindedButton == Builder.GamepadButtons.B && action.gamepad == gp && !action.actuation)
-                action.action.execute();
-            if (!gamepad.y && action.bindedButton == Builder.GamepadButtons.Y && action.gamepad == gp && !action.actuation)
-                action.action.execute();
-            if (!gamepad.x && action.bindedButton == Builder.GamepadButtons.X && action.gamepad == gp && !action.actuation)
-                action.action.execute();
-            if (!gamepad.triangle && action.bindedButton == Builder.GamepadButtons.Triangle && action.gamepad == gp && !action.actuation)
-                action.action.execute();
-            if (!gamepad.cross && action.bindedButton == Builder.GamepadButtons.Cross && action.gamepad == gp && !action.actuation)
-                action.action.execute();
-            if (!gamepad.circle && action.bindedButton == Builder.GamepadButtons.Circle && action.gamepad == gp && !action.actuation)
-                action.action.execute();
-            if (!gamepad.dpad_left && action.bindedButton == Builder.GamepadButtons.DPLEFT && action.gamepad == gp && !action.actuation)
-                action.action.execute();
-            if (!gamepad.dpad_down && action.bindedButton == Builder.GamepadButtons.DPDOWN && action.gamepad == gp && !action.actuation)
-                action.action.execute();
-            if (!gamepad.dpad_right && action.bindedButton == Builder.GamepadButtons.DPRIGHT && action.gamepad == gp && !action.actuation)
-                action.action.execute();
-            if (!gamepad.dpad_up && action.bindedButton == Builder.GamepadButtons.DPUP && action.gamepad == gp && !action.actuation)
-                action.action.execute();
-            if (!gamepad.right_bumper && action.bindedButton == Builder.GamepadButtons.RB && action.gamepad == gp && !action.actuation)
-                action.action.execute();
-            if (!gamepad.left_bumper && action.bindedButton == Builder.GamepadButtons.LB && action.gamepad == gp && !action.actuation)
-                action.action.execute();
-            if (!(gamepad.right_trigger > 0.001) && action.bindedButton == Builder.GamepadButtons.RT && action.gamepad == gp && !action.actuation)
-                action.action.execute();
-            if (!(gamepad.left_trigger > 0.001) && action.bindedButton == Builder.GamepadButtons.LT && action.gamepad == gp && !action.actuation)
-                action.action.execute();
-        }
+        manager.getLeftBackMotor().setPower((manager.linearSpeed * -neginput) - (manager.rotSpeed *rotinput));
+        manager.getRightBackMotor().setPower((manager.linearSpeed * posinput) - (manager.rotSpeed *rotinput));
     }
 
     public void runDriveLoop() {
@@ -164,9 +96,9 @@ public class Drive {
             this.manager = manager;
         }
 
-        public Builder bindActionToButton(GamepadButtons button, Action action, int gamepad, boolean actuation)
+        public Builder bindActionToButton(boolean trigger, Action action)
         {
-            actions.add(new DriveAction(action, button, gamepad, actuation));
+            actions.add(new DriveAction(trigger, action));
             return this;
         }
 
@@ -176,29 +108,9 @@ public class Drive {
             return this;
         }
 
-        public Drive Build()
+        public Drive build()
         {
             return new Drive(manager, actions, loop);
-        }
-
-        public enum GamepadButtons
-        {
-            Y,
-            B,
-            A,
-            X,
-            Square,
-            Triangle,
-            Cross,
-            Circle,
-            RB,
-            LB,
-            DPRIGHT,
-            DPDOWN,
-            DPLEFT,
-            DPUP,
-            RT,
-            LT
         }
     }
 }

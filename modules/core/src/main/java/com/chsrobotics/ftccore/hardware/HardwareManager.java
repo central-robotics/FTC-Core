@@ -164,7 +164,7 @@ public class HardwareManager {
                     accessoryMotors[motorIndex] = hardwareMap.get(DcMotorEx.class,
                             config.accessories.get(i).name);
 
-                    accessoryMotors[motorIndex].setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+                    accessoryMotors[motorIndex].setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
                     accessoryMotors[motorIndex].setDirection(DcMotorSimple.Direction.FORWARD);
                     accessoryMotors[motorIndex].setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                     accessoryMotors[motorIndex].setMode(DcMotor.RunMode.RUN_USING_ENCODER);
