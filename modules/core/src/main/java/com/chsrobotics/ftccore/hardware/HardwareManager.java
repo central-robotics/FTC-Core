@@ -3,6 +3,7 @@ package com.chsrobotics.ftccore.hardware;
 import com.chsrobotics.ftccore.engine.navigation.control.PID;
 import com.chsrobotics.ftccore.hardware.config.Config;
 import com.chsrobotics.ftccore.hardware.config.accessory.Accessory;
+import com.chsrobotics.ftccore.utilities.ComputerVision;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.*;
@@ -18,6 +19,8 @@ public class HardwareManager {
      * The hardware map object used access hardware configuration to create hardware objects.
      */
     public final HardwareMap hardwareMap;
+
+    public double offset = 0;
 
     /**
      * Four component array containing the four drive motors. Modifying this variable is extremely dangerous.
@@ -75,6 +78,9 @@ public class HardwareManager {
             initializePID(config);
 
         initializeLinearOpMode(config);
+
+        if (config.useCV)
+            ComputerVision.initializeCV(this);
     }
 
     private void initializeDriveMotors(Config config)
@@ -93,6 +99,8 @@ public class HardwareManager {
 
     private void initializeIMU(Config config)
     {
+        offset = config.offset;
+
         if (!imuLocalEnabled)
             return;
 

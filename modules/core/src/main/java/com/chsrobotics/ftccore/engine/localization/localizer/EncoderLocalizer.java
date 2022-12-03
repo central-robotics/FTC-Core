@@ -77,7 +77,7 @@ public class EncoderLocalizer extends Localizer{
         double theta;
 
         //Compute robot theta
-        theta = hardware.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS).firstAngle;
+        theta = hardware.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS).firstAngle - hardware.offset;
         if (theta > 2 * Math.PI) {
             theta -= 2 * Math.PI;
         } else if (theta < 0) {

@@ -107,6 +107,7 @@ public class NavigationEngine {
 
     public void navigateInANonLinearFashion(List<Position> positions)
     {
+
         double distTraveled = 0;
         Position lastPosition = localization.getCurrentPosition();
 

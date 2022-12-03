@@ -59,7 +59,7 @@ public class Drive {
             joystick_power = Math.sqrt(Math.pow(joystick_x, 2) + Math.pow(joystick_y, 2));
 
             gyro_angles = manager.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS);
-            theta = gyro_angles.firstAngle - manager.IMUReset;
+            theta = gyro_angles.firstAngle - manager.IMUReset - manager.offset;
 
             orientation = (joystick_x > 0) ? (Math.atan(-joystick_y / joystick_x) - Math.PI / 4) - theta :
                     (Math.atan(-joystick_y / joystick_x) + Math.PI - Math.PI / 4) - theta;
