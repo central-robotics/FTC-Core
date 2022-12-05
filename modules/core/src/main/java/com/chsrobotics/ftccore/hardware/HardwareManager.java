@@ -81,6 +81,9 @@ public class HardwareManager {
 
         if (config.useCV)
             ComputerVision.initializeCV(this);
+
+        linearSpeed = config.linearSpeed;
+        rotSpeed = config.rotSpeed;
     }
 
     private void initializeDriveMotors(Config config)
@@ -89,7 +92,7 @@ public class HardwareManager {
         for (int i = 0; i < 4; i++)
         {
             driveMotors[i] = (DcMotorEx) hardwareMap.dcMotor.get(config.driveMotors[i]);
-            driveMotors[i].setDirection(DcMotorSimple.Direction.REVERSE);
+            driveMotors[i].setDirection(DcMotorSimple.Direction.FORWARD);
             driveMotors[i].setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
             driveMotors[i].setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);

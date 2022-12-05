@@ -14,14 +14,12 @@ import java.util.Vector;
 
 public class Drive {
     public final HardwareManager manager;
-    private final ArrayList<DriveAction> actions;
     private long prevTime = System.currentTimeMillis();
     private final UserDriveLoop loop;
 
-    public Drive (HardwareManager manager, ArrayList<DriveAction> actions, UserDriveLoop loop)
+    public Drive (HardwareManager manager, UserDriveLoop loop)
     {
         this.manager = manager;
-        this.actions = actions;
         this.loop = loop;
     }
 
@@ -32,12 +30,6 @@ public class Drive {
             loop.loop();
 
             prevTime = System.currentTimeMillis();
-
-            for (DriveAction action : actions)
-            {
-                if (action.trigger)
-                    action.action.execute();
-            }
 
             Gamepad gamepad1 = manager.opMode.gamepad1;
 
@@ -51,8 +43,11 @@ public class Drive {
             double rot_power;
             Orientation gyro_angles;
 
-            joystick_y = -gamepad1.left_stick_y;
-            joystick_x = (gamepad1.left_stick_x == 0) ? 0.000001 : -gamepad1.left_stick_x;
+            joystick_y = gamepad1.left_stick_y > 0 ? Math.pow(gamepad1.left_stick_y, 2) :
+                    -Math.pow(gamepad1.left_stick_y, 2);
+            joystick_x = (gamepad1.left_stick_x == 0) ? 0.000001 :
+                    (gamepad1.left_stick_x > 0 ? Math.pow(gamepad1.left_stick_x, 2) :
+                            -Math.pow(gamepad1.left_stick_x, 2));
 
             rot_power = (gamepad1.right_stick_x);
 
@@ -61,8 +56,8 @@ public class Drive {
             gyro_angles = manager.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS);
             theta = gyro_angles.firstAngle - manager.IMUReset - manager.offset;
 
-            orientation = (joystick_x > 0) ? (Math.atan(joystick_y / joystick_x) - Math.PI / 4) + theta :
-                    (Math.atan(joystick_y / joystick_x) + Math.PI - Math.PI / 4) + theta;
+            orientation = (joystick_x > 0) ? (Math.atan(-joystick_y / joystick_x) - Math.PI / 4) - theta :
+                    (Math.atan(-joystick_y / joystick_x) + Math.PI - Math.PI / 4) - theta;
 
             negative_power = (joystick_power * Math.sin(orientation));
             positive_power = (orientation != 0) ? (joystick_power * Math.cos(orientation)) :
@@ -76,8 +71,8 @@ public class Drive {
     {
         manager.getLeftFrontMotor().setPower((manager.linearSpeed * -posinput) - (manager.rotSpeed *rotinput));
         manager.getRightFrontMotor().setPower((manager.linearSpeed * neginput) - (manager.rotSpeed *rotinput));
-        manager.getLeftBackMotor().setPower((manager.linearSpeed * -neginput) - (manager.rotSpeed *rotinput));
-        manager.getRightBackMotor().setPower((manager.linearSpeed * posinput) - (manager.rotSpeed *rotinput));
+        manager.getLeftBackMotor().setPower((manager.linearSpeed * -neginput)- (manager.rotSpeed *rotinput));
+        manager.getRightBackMotor().setPower((manager.linearSpeed * posinput)- (manager.rotSpeed *rotinput));
     }
 
     public void runDriveLoop() {
@@ -87,19 +82,11 @@ public class Drive {
     public static class Builder
     {
         private final HardwareManager manager;
-        private final ArrayList<DriveAction> actions;
         private UserDriveLoop loop;
 
         public Builder(HardwareManager manager)
         {
-            this.actions = new ArrayList<>();
             this.manager = manager;
-        }
-
-        public Builder bindActionToButton(boolean trigger, Action action)
-        {
-            actions.add(new DriveAction(trigger, action));
-            return this;
         }
 
         public Builder addUserLoop(UserDriveLoop loop)
@@ -110,7 +97,7 @@ public class Drive {
 
         public Drive build()
         {
-            return new Drive(manager, actions, loop);
+            return new Drive(manager, loop);
         }
     }
 }

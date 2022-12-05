@@ -51,18 +51,7 @@ public class NavigationEngine {
         if (thetaError < 0 && (thetaError > -Math.PI))
             isCounterClockwise = false;
 
-//        hardware.opMode.telemetry.addData("Ep", error);
-//        hardware.opMode.telemetry.addData("Et", thetaError);
-//        hardware.opMode.telemetry.addData("Ct", position.t);
-//        hardware.opMode.telemetry.addData("Dt", destination.t);
-//        hardware.opMode.telemetry.addData("V", MathUtil.calculateDistance(position, localization.lastPosition));
-//        if (error >= 10) {
-//            hardware.opMode.telemetry.addLine("Position");
-//        }
-//        if (thetaError >= 0.02) {
-//            hardware.opMode.telemetry.addLine("Theta");
-//        }
-        return (error < 40 && Math.abs(thetaError) < 0.2); //&& MathUtil.calculateDistance(position, localization.lastPosition) < 5);
+        return (error < 40 && Math.abs(thetaError) < 0.2);
     }
 
     public void navigateInALinearFashion(Position destination)
@@ -163,6 +152,7 @@ public class NavigationEngine {
             hardware.getLeftBackMotor().setVelocity((-negOutput) - ((isCounterClockwise ? -1 : 1) * thetaOutput));
             hardware.getRightBackMotor().setVelocity((posOutput) - ((isCounterClockwise ? -1 : 1) * thetaOutput));
         }
+        
         navigateInALinearFashion(positions.get(positions.size() - 1));
 
         hardware.getLeftFrontMotor().setVelocity(0);

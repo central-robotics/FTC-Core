@@ -18,7 +18,7 @@ public class Config {
     public LinearOpMode opMode;
     public BNO055IMU.Parameters params;
     public double offset;
-    private double linearSpeed = 1, rotSpeed = 1;
+    public double linearSpeed = 1, rotSpeed = 1;
 
     public boolean debugMode;
     public boolean useCV;
