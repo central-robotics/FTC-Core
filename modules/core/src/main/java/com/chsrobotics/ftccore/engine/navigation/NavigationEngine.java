@@ -152,7 +152,7 @@ public class NavigationEngine {
             hardware.getLeftBackMotor().setVelocity((-negOutput) - ((isCounterClockwise ? -1 : 1) * thetaOutput));
             hardware.getRightBackMotor().setVelocity((posOutput) - ((isCounterClockwise ? -1 : 1) * thetaOutput));
         }
-        
+
         navigateInALinearFashion(positions.get(positions.size() - 1));
 
         hardware.getLeftFrontMotor().setVelocity(0);

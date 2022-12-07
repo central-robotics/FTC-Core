@@ -3,7 +3,6 @@ package com.chsrobotics.ftccore.hardware;
 import com.chsrobotics.ftccore.engine.navigation.control.PID;
 import com.chsrobotics.ftccore.hardware.config.Config;
 import com.chsrobotics.ftccore.hardware.config.accessory.Accessory;
-import com.chsrobotics.ftccore.utilities.ComputerVision;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.*;
@@ -46,6 +45,8 @@ public class HardwareManager {
      */
     public WebcamName[] accessoryCameras;
 
+    public boolean useCV;
+
     /**
      * Main PID controllers that the Nav engine will draw on;
      */
@@ -80,7 +81,7 @@ public class HardwareManager {
         initializeLinearOpMode(config);
 
         if (config.useCV)
-            ComputerVision.initializeCV(this);
+            this.useCV = config.useCV;
 
         linearSpeed = config.linearSpeed;
         rotSpeed = config.rotSpeed;
