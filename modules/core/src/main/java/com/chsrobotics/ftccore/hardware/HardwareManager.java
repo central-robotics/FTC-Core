@@ -81,7 +81,7 @@ public class HardwareManager {
         initializeLinearOpMode(config);
 
         if (config.useCV)
-            this.useCV = config.useCV;
+            this.useCV = true;
 
         linearSpeed = config.linearSpeed;
         rotSpeed = config.rotSpeed;

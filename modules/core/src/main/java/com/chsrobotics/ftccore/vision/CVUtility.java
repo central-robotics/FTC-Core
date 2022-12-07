@@ -2,21 +2,23 @@ package com.chsrobotics.ftccore.vision;
 
 import com.chsrobotics.ftccore.hardware.HardwareManager;
 
-import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.opencv.core.Mat;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvPipeline;
 
-public abstract class CVInterface {
+public class CVUtility {
 
     private OpenCvCamera camera;
     private InterfacePipeline pipeline;
     public boolean initialized = false;
 
-    public CVInterface(HardwareManager manager)
+    public CVUtility(HardwareManager manager)
     {
+        if (!manager.useCV)
+            return;
+
         camera = OpenCvCameraFactory.getInstance().createWebcam(manager.accessoryCameras[0]);
 
         camera.setPipeline(pipeline = new InterfacePipeline());
@@ -33,6 +35,8 @@ public abstract class CVInterface {
             }
         });
     }
+
+
 
     public void startStreaming()
     {
