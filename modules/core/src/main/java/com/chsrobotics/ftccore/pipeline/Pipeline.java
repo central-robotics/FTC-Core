@@ -95,6 +95,12 @@ public class Pipeline {
             return this;
         }
 
+        public Builder addLinearPath(Position... positions) {
+            steps.add(new PipelineStep(Path.linear(positions)));
+
+            return this;
+        }
+
         public Builder addContinuousAction(ContinuousAction continuousAction)
         {
             continuousActions.add(continuousAction);
