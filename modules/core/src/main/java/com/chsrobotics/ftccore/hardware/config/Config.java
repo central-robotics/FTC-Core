@@ -21,6 +21,7 @@ public class Config {
     public double linearSpeed = 1, rotSpeed = 1;
 
     public boolean debugMode;
+    public boolean reversed;
     public boolean useCV;
 
 
@@ -37,6 +38,7 @@ public class Config {
         private BNO055IMU.Parameters params;
 
         private boolean debugMode;
+        private boolean reversed = false;
         private boolean useCV = false;
 
 
@@ -145,6 +147,12 @@ public class Config {
             return this;
         }
 
+        public Builder setMotorDirection(Boolean reversed)
+        {
+            this.reversed = reversed;
+            return this;
+        }
+
         /**
          * If the orientation is inverted or modified in some way, IMUOffset will add a constant to add or subtract the calculated orientation
          * of the robot.
@@ -191,6 +199,7 @@ public class Config {
             config.rotSpeed = rotSpeed;
             config.params = params;
             config.offset = offset;
+            config.reversed = this.reversed;
             config.useCV = useCV;
 
             return config;
