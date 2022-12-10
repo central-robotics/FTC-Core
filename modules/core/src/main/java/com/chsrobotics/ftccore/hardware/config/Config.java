@@ -4,6 +4,7 @@ import com.chsrobotics.ftccore.hardware.config.accessory.Accessory;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.PIDCoefficients;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
@@ -17,13 +18,12 @@ public class Config {
     public PIDCoefficients rotCoeffs;
     public LinearOpMode opMode;
     public BNO055IMU.Parameters params;
+    public DcMotorSimple.Direction direction;
     public double offset;
     public double linearSpeed = 1, rotSpeed = 1;
 
     public boolean debugMode;
-    public boolean reversed;
     public boolean useCV;
-
 
     public static class Builder {
         private String[] driveMotors;
@@ -36,6 +36,7 @@ public class Config {
         private double offset = 0;
         private double linearSpeed = 1, rotSpeed = 1;
         private BNO055IMU.Parameters params;
+        public DcMotorSimple.Direction direction;
 
         private boolean debugMode;
         private boolean reversed = false;
@@ -147,9 +148,9 @@ public class Config {
             return this;
         }
 
-        public Builder setMotorDirection(Boolean reversed)
+        public Builder setMotorDirection(DcMotorSimple.Direction direction)
         {
-            this.reversed = reversed;
+            this.direction = direction;
             return this;
         }
 
@@ -199,7 +200,7 @@ public class Config {
             config.rotSpeed = rotSpeed;
             config.params = params;
             config.offset = offset;
-            config.reversed = this.reversed;
+            config.direction = direction;
             config.useCV = useCV;
 
             return config;

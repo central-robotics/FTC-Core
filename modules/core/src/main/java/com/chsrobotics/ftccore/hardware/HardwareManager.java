@@ -93,10 +93,8 @@ public class HardwareManager {
         for (int i = 0; i < 4; i++)
         {
             driveMotors[i] = (DcMotorEx) hardwareMap.dcMotor.get(config.driveMotors[i]);
-            if (config.reversed)
-                driveMotors[i].setDirection(DcMotorSimple.Direction.REVERSE);
-            else
-                driveMotors[i].setDirection(DcMotorSimple.Direction.FORWARD);
+
+            driveMotors[i].setDirection(config.direction);
 
             driveMotors[i].setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
