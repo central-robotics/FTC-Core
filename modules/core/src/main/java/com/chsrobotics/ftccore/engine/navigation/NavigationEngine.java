@@ -51,7 +51,7 @@ public class NavigationEngine {
         if (thetaError < 0 && (thetaError > -Math.PI))
             isCounterClockwise = false;
 
-        return (error < 40 && Math.abs(thetaError) < 0.2);
+        return (error < 40 && Math.abs(thetaError) < 0.15);
     }
 
     public void navigateInALinearFashion(Position destination)

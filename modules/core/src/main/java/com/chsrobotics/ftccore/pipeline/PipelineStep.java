@@ -23,9 +23,23 @@ public class PipelineStep {
         this.path = null;
     }
 
+    public PipelineStep(StepType type)
+    {
+        if (type == StepType.stop) {
+            this.path = null;
+            this.action = null;
+            this.type = type;
+        } else {
+            this.path = null;
+            this.action = null;
+            this.type = null;
+        }
+    }
+
     public enum StepType
     {
         navigation,
         action,
+        stop
     }
 }

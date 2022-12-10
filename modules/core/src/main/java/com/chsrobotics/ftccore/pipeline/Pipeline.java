@@ -8,6 +8,7 @@ import com.chsrobotics.ftccore.engine.navigation.path.Path;
 import com.chsrobotics.ftccore.geometry.Position;
 import com.chsrobotics.ftccore.hardware.HardwareManager;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -55,8 +56,11 @@ public class Pipeline {
             {
                 assert step.action != null;
                 step.action.execute();
+            } else if (step.type == PipelineStep.StepType.stop)
+            {
+                for (DcMotorEx motor : manager.driveMotors)
+                    motor.setPower(0);
             }
-
         }
     }
 
@@ -82,8 +86,12 @@ public class Pipeline {
             return this;
         }
 
-        public Builder addLinearPath(Position... positions) {
+        public Builder addLinearPath(boolean continuous, Position... positions) {
             steps.add(new PipelineStep(Path.linear(positions)));
+
+            if (!continuous)
+                steps.add(new PipelineStep(PipelineStep.StepType.stop));
+
             return this;
         }
 

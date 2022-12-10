@@ -18,7 +18,8 @@ public class Config {
     public PIDCoefficients rotCoeffs;
     public LinearOpMode opMode;
     public BNO055IMU.Parameters params;
-    public DcMotorSimple.Direction direction;
+    public DcMotorSimple.Direction direction = DcMotorSimple.Direction.FORWARD;
+
     public double offset;
     public double linearSpeed = 1, rotSpeed = 1;
 
