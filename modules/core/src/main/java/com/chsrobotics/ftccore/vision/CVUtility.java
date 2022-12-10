@@ -36,8 +36,6 @@ public class CVUtility {
         });
     }
 
-
-
     public void startStreaming()
     {
         camera.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
