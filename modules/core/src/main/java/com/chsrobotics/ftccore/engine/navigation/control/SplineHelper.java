@@ -1,5 +1,8 @@
 package com.chsrobotics.ftccore.engine.navigation.control;
 
+import org.apache.commons.math3.analysis.ParametricUnivariateFunction;
+import org.apache.commons.math3.analysis.integration.RombergIntegrator;
+import org.apache.commons.math3.analysis.integration.UnivariateIntegrator;
 import org.apache.commons.math3.analysis.interpolation.SplineInterpolator;
 import org.apache.commons.math3.analysis.polynomials.PolynomialSplineFunction;
 
@@ -9,6 +12,7 @@ public class SplineHelper {
         double arcLength = 0;
         double[] t = new double[x.length];
         SplineInterpolator interp = new SplineInterpolator();
+
 
         t[0] = 0;
 

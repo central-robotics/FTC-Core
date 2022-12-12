@@ -1,5 +1,7 @@
 package com.chsrobotics.ftccore.teleop;
 
+import android.icu.number.Scale;
+
 import com.chsrobotics.ftccore.actions.Action;
 import com.chsrobotics.ftccore.hardware.HardwareManager;
 import com.qualcomm.robotcore.hardware.Gamepad;
@@ -16,9 +18,11 @@ public class Drive {
     public final HardwareManager manager;
     private long prevTime = System.currentTimeMillis();
     private final UserDriveLoop loop;
+    private final Builder.ScaleMode mode;
 
-    public Drive (HardwareManager manager, UserDriveLoop loop)
+    public Drive (HardwareManager manager, UserDriveLoop loop, Builder.ScaleMode mode)
     {
+        this.mode = mode;
         this.manager = manager;
         this.loop = loop;
     }
@@ -35,7 +39,7 @@ public class Drive {
 
             double joystick_y;
             double joystick_x;
-            double joystick_power;
+            double joystick_power = 0;
             double negative_power;
             double positive_power;
             double theta;
@@ -51,7 +55,20 @@ public class Drive {
 
             rot_power = (gamepad1.right_stick_x);
 
-            joystick_power = Math.sqrt(Math.pow(joystick_x, 2) + Math.pow(joystick_y, 2));
+            double rawPower = Math.sqrt(Math.pow(joystick_x, 2) + Math.pow(joystick_y, 2));
+
+            switch (mode)
+            {
+                case SIN_SCALE:
+                    joystick_power = (Math.sin((rawPower * (Math.PI/2)) - (Math.PI / 2d))) + 1;
+                    break;
+                case QUADRATIC_SCALE:
+                    joystick_power = Math.pow(rawPower, 2);
+                    break;
+                default:
+                    joystick_power = rawPower;
+                    break;
+            }
 
             gyro_angles = manager.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS);
             theta = gyro_angles.firstAngle - manager.IMUReset - manager.offset;
@@ -83,9 +100,11 @@ public class Drive {
     {
         private final HardwareManager manager;
         private UserDriveLoop loop;
+        private ScaleMode mode = ScaleMode.LINEAR;
 
         public Builder(HardwareManager manager)
         {
+
             this.manager = manager;
         }
 
@@ -95,9 +114,22 @@ public class Drive {
             return this;
         }
 
+        public Builder useScale(ScaleMode mode)
+        {
+            this.mode = mode;
+            return this;
+        }
+
+        public enum ScaleMode
+        {
+            LINEAR,
+            SIN_SCALE,
+            QUADRATIC_SCALE
+        }
+
         public Drive build()
         {
-            return new Drive(manager, loop);
+            return new Drive(manager, loop, mode);
         }
     }
 }
