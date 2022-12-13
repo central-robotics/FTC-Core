@@ -37,7 +37,7 @@ public class Config {
         private double offset = 0;
         private double linearSpeed = 1, rotSpeed = 1;
         private BNO055IMU.Parameters params;
-        public DcMotorSimple.Direction direction;
+        public DcMotorSimple.Direction direction = DcMotorSimple.Direction.FORWARD;
 
         private boolean debugMode;
         private boolean reversed = false;
