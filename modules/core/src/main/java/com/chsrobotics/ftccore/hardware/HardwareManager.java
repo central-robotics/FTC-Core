@@ -45,6 +45,8 @@ public class HardwareManager {
      */
     public WebcamName[] accessoryCameras;
 
+    public DcMotorEx[] accessoryOdometryPods;
+
     public boolean useCV;
 
     /**
@@ -134,6 +136,7 @@ public class HardwareManager {
         int motors = 0;
         int servos = 0;
         int cameras = 0;
+        int odometryPods = 0;
 
         for (Accessory a : config.accessories)
         {
@@ -148,6 +151,8 @@ public class HardwareManager {
                 case WEBCAM:
                     cameras++;
                     break;
+                case ODOMETRY_POD:
+                    odometryPods++;
                 default:
                     break;
             }
@@ -156,11 +161,13 @@ public class HardwareManager {
         accessoryMotors = new DcMotorEx[motors];
         accessoryServos = new Servo[servos];
         accessoryCameras = new WebcamName[cameras];
+        accessoryOdometryPods = new DcMotorEx[cameras];
 
 
         int motorIndex = 0;
         int servoIndex = 0;
         int webcamIndex = 0;
+        int odometryPodIndex = 0;
 
         for (int i = 0; i < config.accessories.size(); i++)
         {
@@ -186,6 +193,15 @@ public class HardwareManager {
                     accessoryCameras[webcamIndex] = hardwareMap.get(WebcamName.class,
                             config.accessories.get(i).name);
                     webcamIndex++;
+                    break;
+                case ODOMETRY_POD:
+                    accessoryOdometryPods[odometryPodIndex] = hardwareMap.get(DcMotorEx.class, config.accessories.get(i).name);
+                    accessoryOdometryPods[odometryPodIndex].setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+                    accessoryOdometryPods[odometryPodIndex].setDirection(DcMotorSimple.Direction.FORWARD);
+                    accessoryOdometryPods[odometryPodIndex].setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                    accessoryOdometryPods[odometryPodIndex].setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                    // todo: seems like we may need to use another RunMode
+                    // https://www.reddit.com/r/FTC/comments/ph4cri/comment/hcdeury/?utm_source=share&utm_medium=web2x&context=3
                     break;
             }
         }

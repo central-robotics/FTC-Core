@@ -19,5 +19,9 @@ public enum AccessoryType {
     /**
      * Specifies that the accessory being registered is a Intel T265 camera for use with the localization engine.
      */
-    T265CAM
+    T265CAM,
+    /**
+     * Odometry pod
+     */
+    ODOMETRY_POD
 }
