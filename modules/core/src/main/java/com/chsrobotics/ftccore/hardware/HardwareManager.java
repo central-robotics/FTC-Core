@@ -47,6 +47,8 @@ public class HardwareManager {
 
     public DcMotorEx[] accessoryOdometryPods;
 
+    public CRServo[] accessoryContinuousServo;
+
     public boolean useCV;
 
     /**
@@ -137,6 +139,7 @@ public class HardwareManager {
         int servos = 0;
         int cameras = 0;
         int odometryPods = 0;
+        int continuousServos = 0;
 
         for (Accessory a : config.accessories)
         {
@@ -153,6 +156,10 @@ public class HardwareManager {
                     break;
                 case ODOMETRY_POD:
                     odometryPods++;
+                    break;
+                case CONTINUOUS_SERVO:
+                    continuousServos++;
+                    break;
                 default:
                     break;
             }
@@ -161,13 +168,15 @@ public class HardwareManager {
         accessoryMotors = new DcMotorEx[motors];
         accessoryServos = new Servo[servos];
         accessoryCameras = new WebcamName[cameras];
-        accessoryOdometryPods = new DcMotorEx[cameras];
+        accessoryOdometryPods = new DcMotorEx[odometryPods];
+        accessoryContinuousServo = new CRServo[continuousServos];
 
 
         int motorIndex = 0;
         int servoIndex = 0;
         int webcamIndex = 0;
         int odometryPodIndex = 0;
+        int continuousServoIndex = 0;
 
         for (int i = 0; i < config.accessories.size(); i++)
         {
@@ -202,6 +211,10 @@ public class HardwareManager {
                     accessoryOdometryPods[odometryPodIndex].setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                     // todo: seems like we may need to use another RunMode
                     // https://www.reddit.com/r/FTC/comments/ph4cri/comment/hcdeury/?utm_source=share&utm_medium=web2x&context=3
+                    break;
+                case CONTINUOUS_SERVO:
+                    accessoryContinuousServo[continuousServoIndex] = hardwareMap.get(CRServo.class, config.accessories.get(i).name);
+                    continuousServoIndex++;
                     break;
             }
         }

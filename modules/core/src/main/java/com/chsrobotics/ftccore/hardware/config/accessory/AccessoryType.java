@@ -23,5 +23,9 @@ public enum AccessoryType {
     /**
      * Odometry pod
      */
-    ODOMETRY_POD
+    ODOMETRY_POD,
+    /**
+     * Continuous rotation servo
+     */
+    CONTINUOUS_SERVO
 }
