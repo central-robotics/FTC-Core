@@ -28,37 +28,35 @@ public class OdometryLocalizer extends Localizer{
 
 
     public double getThetaDifference(double current, double old) {
-//        double thetaError = .t - position.t;
-//        boolean isCounterClockwise = false;
-//
-//        if (Math.abs(destination.t - (position.t - (2 * Math.PI))) < Math.abs(thetaError))
-//        {
-//            thetaError = destination.t - (position.t - (2 * Math.PI));
-//            isCounterClockwise = true;
-//        }
-//
-//        if (Math.abs(destination.t - (position.t + (2 * Math.PI))) < thetaError)
-//        {
-//            thetaError = destination.t - (position.t + (2 * Math.PI));
-//            isCounterClockwise = true;
-//        }
-//
-//        if (thetaError > 0 && (thetaError < Math.PI)) {
-//            isCounterClockwise = true;
-//        }
-//
-//        if (thetaError < 0 && (thetaError > -Math.PI)) {
-//            isCounterClockwise = false;
-//        }
-//
-//        return (error < 40 && Math.abs(thetaError) < 0.15);
-        
-        return 0;
+        double thetaError = current - old;
+        boolean isCounterClockwise = false;
+
+        if (Math.abs(current - (old - (2 * Math.PI))) < Math.abs(thetaError))
+        {
+            thetaError = current - (old - (2 * Math.PI));
+            isCounterClockwise = true;
+        }
+
+        if (Math.abs(current - (old + (2 * Math.PI))) < thetaError)
+        {
+            thetaError = current - (old + (2 * Math.PI));
+            isCounterClockwise = true;
+        }
+
+        if (thetaError > 0 && (thetaError < Math.PI)) {
+            isCounterClockwise = true;
+        }
+
+        if (thetaError < 0 && (thetaError > -Math.PI)) {
+            isCounterClockwise = false;
+        }
+
+        return Math.abs(thetaError) * (isCounterClockwise ? 1 : -1);
     }
 
     @Override
     public Position getRobotPosition(Position previousPosition) {
-/*        //Encoder values. These are in ticks. We will later convert this to a usable distance.
+        //Encoder values. These are in ticks. We will later convert this to a usable distance.
 
         //Record encoder values.
         int lateralPos = hardware.getLeftFrontMotor().getCurrentPosition();
@@ -84,7 +82,7 @@ public class OdometryLocalizer extends Localizer{
 //        deltaY = (robotLfDisp - robotRfDisp - robotRbDisp + robotLbDisp) / (2 * Math.sqrt(2));
 
         //Robot theta
-        double theta;
+/*        double theta;
 
         //Compute robot theta
         theta = hardware.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS).firstAngle - hardware.offset;
@@ -105,8 +103,7 @@ public class OdometryLocalizer extends Localizer{
 
         if (robotPosition.x == 0) robotPosition.x = 0.0000001;
 
-        return robotPosition;
-        */
+        return robotPosition;*/
         return new Position();
     }
 
