@@ -59,23 +59,42 @@ public class OdometryLocalizer extends Localizer{
         //Encoder values. These are in ticks. We will later convert this to a usable distance.
 
         //Record encoder values.
-        int lateralPos = hardware.getLeftFrontMotor().getCurrentPosition();
-        int longitudinalPos = hardware.getRightFrontMotor().getCurrentPosition();
+        int lateralPos = hardware.accessoryOdometryPods[0].getCurrentPosition();
+        int longitudinalPos = hardware.accessoryOdometryPods[1].getCurrentPosition();
+
+        double theta = hardware.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS).firstAngle - hardware.offset;
+        if (theta > 2 * Math.PI) {
+            theta -= 2 * Math.PI;
+        } else if (theta < 0) {
+            theta += 2 * Math.PI;
+        }
 
         //Displacement values
 
         //Calculate displacement values
-        double latDisp = (lateralPos - lastLatPos) * MiscConstants.DISTANCE_PER_TICK;
-        double longDisp = (longitudinalPos - lastLongPos) * MiscConstants.DISTANCE_PER_TICK;
+        double latDisp = (lateralPos - lastLatPos) * 0.05368932757;
+        double longDisp = (longitudinalPos - lastLongPos) * 0.05368932757;
 
         //Store encoder values so we can use them in calculating displacement.
         lastLatPos = lateralPos;
         lastLongPos = longitudinalPos;
 
+        double deltaXf = latDisp * Math.cos(theta) - latDisp * Math.sin(theta);
+        double deltaYf = longDisp * Math.cos(theta) + longDisp * Math.sin(theta);
+
+        Position robotPosition = new Position();
+        robotPosition.x = previousPosition.x - deltaXf;
+        robotPosition.y = previousPosition.y - deltaYf;
+        robotPosition.t = theta;
+
+        if (robotPosition.x == 0) robotPosition.x = 0.0000001;
+
+        return robotPosition;
+
         //Calculate net displacement after accounting for rotation
 
         //Holonomic displacement in robot reference frame.
-        double deltaX, deltaY;
+//        double deltaX, deltaY;
 
         //Compute displacement in robot reference frame.
 //        deltaX = (robotLfDisp + robotRfDisp - robotRbDisp - robotLbDisp) / (2 * Math.sqrt(2));
@@ -104,7 +123,6 @@ public class OdometryLocalizer extends Localizer{
         if (robotPosition.x == 0) robotPosition.x = 0.0000001;
 
         return robotPosition;*/
-        return new Position();
     }
 
     @Override

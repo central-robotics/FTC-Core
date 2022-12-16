@@ -66,6 +66,7 @@ public class HardwareManager {
     public double IMUReset = 0;
 
     public boolean imuLocalEnabled = true;
+    public boolean thetaReversed = false;
 
     /**
      * Creates a hardware management interface and initializes all the hardware as specified by the configuration.
@@ -89,6 +90,7 @@ public class HardwareManager {
 
         linearSpeed = config.linearSpeed;
         rotSpeed = config.rotSpeed;
+        thetaReversed = config.thetaReversed;
     }
 
     private void initializeDriveMotors(Config config)
@@ -209,6 +211,7 @@ public class HardwareManager {
                     accessoryOdometryPods[odometryPodIndex].setDirection(DcMotorSimple.Direction.FORWARD);
                     accessoryOdometryPods[odometryPodIndex].setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                     accessoryOdometryPods[odometryPodIndex].setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                    odometryPodIndex++;
                     // todo: seems like we may need to use another RunMode
                     // https://www.reddit.com/r/FTC/comments/ph4cri/comment/hcdeury/?utm_source=share&utm_medium=web2x&context=3
                     break;

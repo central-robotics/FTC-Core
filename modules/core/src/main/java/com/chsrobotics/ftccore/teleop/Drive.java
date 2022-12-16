@@ -47,13 +47,10 @@ public class Drive {
             double rot_power;
             Orientation gyro_angles;
 
-            joystick_y = gamepad1.left_stick_y > 0 ? Math.pow(gamepad1.left_stick_y, 2) :
-                    -Math.pow(gamepad1.left_stick_y, 2);
-            joystick_x = (gamepad1.left_stick_x == 0) ? 0.000001 :
-                    (gamepad1.left_stick_x > 0 ? Math.pow(gamepad1.left_stick_x, 2) :
-                            -Math.pow(gamepad1.left_stick_x, 2));
+            joystick_y = gamepad1.left_stick_y;
+            joystick_x = gamepad1.left_stick_x == 0 ? 0.001 : gamepad1.left_stick_x;
 
-            rot_power = (gamepad1.right_stick_x);
+            rot_power = (manager.thetaReversed ? -1 : 1) * gamepad1.right_stick_x;
 
             double rawPower = Math.sqrt(Math.pow(joystick_x, 2) + Math.pow(joystick_y, 2));
 
@@ -73,8 +70,10 @@ public class Drive {
             gyro_angles = manager.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS);
             theta = gyro_angles.firstAngle - manager.IMUReset - manager.offset;
 
-            orientation = (joystick_x > 0) ? (Math.atan(-joystick_y / joystick_x) - Math.PI / 4) - theta :
-                    (Math.atan(-joystick_y / joystick_x) + Math.PI - Math.PI / 4) - theta;
+            theta *= manager.thetaReversed ? -1 : 1;
+
+            orientation = (joystick_x > 0) ? (Math.atan(joystick_y / joystick_x) - Math.PI / 4) - theta :
+                    (Math.atan(joystick_y / joystick_x) + Math.PI - Math.PI / 4) - theta;
 
             negative_power = (joystick_power * Math.sin(orientation));
             positive_power = (orientation != 0) ? (joystick_power * Math.cos(orientation)) :
@@ -86,10 +85,14 @@ public class Drive {
 
     public void move(double posinput, double neginput, double rotinput)
     {
-        manager.getLeftFrontMotor().setPower((manager.linearSpeed * -posinput) - (manager.rotSpeed *rotinput));
-        manager.getRightFrontMotor().setPower((manager.linearSpeed * neginput) - (manager.rotSpeed *rotinput));
-        manager.getLeftBackMotor().setPower((manager.linearSpeed * -neginput)- (manager.rotSpeed *rotinput));
-        manager.getRightBackMotor().setPower((manager.linearSpeed * posinput)- (manager.rotSpeed *rotinput));
+        manager.opMode.telemetry.addData("lf", -posinput - rotinput);
+        manager.opMode.telemetry.addData("rf", neginput - rotinput);
+        manager.opMode.telemetry.addData("lb", -neginput - rotinput);
+        manager.opMode.telemetry.addData("rb", posinput - rotinput);
+        manager.getLeftFrontMotor().setPower((manager.linearSpeed * -posinput) - (manager.rotSpeed * rotinput));
+        manager.getRightFrontMotor().setPower((manager.linearSpeed * neginput) - (manager.rotSpeed * rotinput));
+        manager.getLeftBackMotor().setPower((manager.linearSpeed * -neginput) - (manager.rotSpeed * rotinput));
+        manager.getRightBackMotor().setPower((manager.linearSpeed * posinput) - (manager.rotSpeed * rotinput));
     }
 
     public void runDriveLoop() {

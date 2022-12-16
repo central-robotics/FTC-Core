@@ -51,7 +51,7 @@ public class NavigationEngine {
         if (thetaError < 0 && (thetaError > -Math.PI))
             isCounterClockwise = false;
 
-        return (error < 40 && Math.abs(thetaError) < 0.15);
+        return (error < 40 && Math.abs(thetaError) < 0.09);
     }
 
     public void navigateInALinearFashion(Position destination)
@@ -86,7 +86,7 @@ public class NavigationEngine {
             posOutput = magnitude * Math.cos(orientation);
         }
 
-        double thetaOutput = Math.abs(thetaError) >= 0.2 ? rotationController.getOutput(Math.abs(thetaError), 0) : 0;
+        double thetaOutput = Math.abs(thetaError) >= 0.1 ? rotationController.getOutput(Math.abs(thetaError), 0) : 0;
 
         hardware.getLeftFrontMotor().setVelocity((-posOutput) + ((isCounterClockwise ? 1 : -1) * thetaOutput));
         hardware.getRightFrontMotor().setVelocity(( negOutput) + ((isCounterClockwise ? 1 : -1) * thetaOutput));

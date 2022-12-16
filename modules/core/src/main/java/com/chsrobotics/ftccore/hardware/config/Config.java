@@ -25,6 +25,7 @@ public class Config {
 
     public boolean debugMode;
     public boolean useCV;
+    public boolean thetaReversed;
 
     public static class Builder {
         private String[] driveMotors;
@@ -42,6 +43,7 @@ public class Config {
         private boolean debugMode;
         private boolean reversed = false;
         private boolean useCV = false;
+        public boolean thetaReversed = false;
 
 
         /**
@@ -184,6 +186,12 @@ public class Config {
             return this;
         }
 
+        public Builder reverseTheta()
+        {
+            thetaReversed = true;
+            return this;
+        }
+
         /**
          Derives a robot configuration from the configuration builder.
          */
@@ -203,6 +211,7 @@ public class Config {
             config.offset = offset;
             config.direction = direction;
             config.useCV = useCV;
+            config.thetaReversed = thetaReversed;
 
             return config;
         }

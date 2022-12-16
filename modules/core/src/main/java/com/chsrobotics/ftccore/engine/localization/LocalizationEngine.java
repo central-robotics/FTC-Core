@@ -4,6 +4,7 @@ package com.chsrobotics.ftccore.engine.localization;
 import com.chsrobotics.ftccore.engine.localization.localizer.EncoderLocalizer;
 import com.chsrobotics.ftccore.engine.localization.localizer.IMULocalizer;
 import com.chsrobotics.ftccore.engine.localization.localizer.Localizer;
+import com.chsrobotics.ftccore.engine.localization.localizer.OdometryLocalizer;
 import com.chsrobotics.ftccore.engine.localization.localizer.VisionLocalizer;
 import com.chsrobotics.ftccore.geometry.Position;
 import com.chsrobotics.ftccore.hardware.HardwareManager;
@@ -55,6 +56,10 @@ public class LocalizationEngine {
     private void initializeLocalization()
     {
         localizers = new ArrayList<>();
+
+        if (hardware.accessoryOdometryPods.length == 2) {
+            localizers.add(new OdometryLocalizer(null, hardware));
+        }
 
         if (hardware.driveMotors.length == 4) {
             localizers.add(new EncoderLocalizer(null, hardware));
