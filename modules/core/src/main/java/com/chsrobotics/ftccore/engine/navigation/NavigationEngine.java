@@ -94,7 +94,10 @@ public class NavigationEngine {
             posOutput = magnitude * Math.cos(orientation);
         }
 
-        double thetaOutput = Math.abs(thetaError) >= 0.1 ? rotationController.getOutput(Math.abs(thetaError), 0) : 0;
+        negOutput = Math.min(negOutput, 650);
+        posOutput = Math.min(posOutput, 650);
+
+        double thetaOutput = Math.abs(thetaError) >= 0.09 ? rotationController.getOutput(Math.abs(thetaError), 0) : 0;
 
         hardware.getLeftFrontMotor().setVelocity((-posOutput) + ((isCounterClockwise ? -1 : 1) * thetaOutput));
         hardware.getRightFrontMotor().setVelocity(( negOutput) + ((isCounterClockwise ? -1 : 1) * thetaOutput));
