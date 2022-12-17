@@ -70,11 +70,19 @@ public class NavigationEngine {
         double orientation, negOutput, posOutput;
 
         if (destination.x - position.x > 0)
-            orientation = Math.atan(linearController.getSlope(destination, position)) - Math.PI / 4 - position.t;
-        else if (destination.x - position.x < 0)
-            orientation = Math.atan(linearController.getSlope(destination, position)) + Math.PI - Math.PI / 4 - position.t;
+            orientation = Math.atan(-linearController.getSlope(destination, position)) - Math.PI / 4 + position.t;
         else
-            orientation = Math.PI / 2;
+            orientation = Math.atan(-linearController.getSlope(destination, position)) + Math.PI - Math.PI / 4 + position.t;
+
+        if (hardware.debugMode) {
+            hardware.opMode.telemetry.addData("X", position.x);
+            hardware.opMode.telemetry.addData("Y", position.y);
+            hardware.opMode.telemetry.addData("T", position.t);
+            hardware.opMode.telemetry.addData("error", error);
+            hardware.opMode.telemetry.addData("thetaError", thetaError);
+            hardware.opMode.telemetry.addData("orientation", orientation);
+            hardware.opMode.telemetry.update();
+        }
 
         magnitude = linearController.getOutput(error, 0);
 
@@ -88,10 +96,10 @@ public class NavigationEngine {
 
         double thetaOutput = Math.abs(thetaError) >= 0.1 ? rotationController.getOutput(Math.abs(thetaError), 0) : 0;
 
-        hardware.getLeftFrontMotor().setVelocity((-posOutput) + ((isCounterClockwise ? 1 : -1) * thetaOutput));
-        hardware.getRightFrontMotor().setVelocity(( negOutput) + ((isCounterClockwise ? 1 : -1) * thetaOutput));
-        hardware.getLeftBackMotor().setVelocity((-negOutput) + ((isCounterClockwise ? 1 : -1) * thetaOutput));
-        hardware.getRightBackMotor().setVelocity((posOutput) + ((isCounterClockwise ? 1 : -1) * thetaOutput));
+        hardware.getLeftFrontMotor().setVelocity((-posOutput) + ((isCounterClockwise ? -1 : 1) * thetaOutput));
+        hardware.getRightFrontMotor().setVelocity(( negOutput) + ((isCounterClockwise ? -1 : 1) * thetaOutput));
+        hardware.getLeftBackMotor().setVelocity((-negOutput) + ((isCounterClockwise ? -1 : 1) * thetaOutput));
+        hardware.getRightBackMotor().setVelocity((posOutput) + ((isCounterClockwise ? -1 : 1) * thetaOutput));
     }
 
     public void navigateInANonLinearFashion(List<Position> positions)
