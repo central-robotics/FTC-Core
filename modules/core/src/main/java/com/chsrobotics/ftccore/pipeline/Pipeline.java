@@ -38,11 +38,19 @@ public class Pipeline {
 
         for (PipelineStep step : steps)
         {
+            if (manager.opMode.isStopRequested())
+            {
+                break;
+            }
             if (step.type == PipelineStep.StepType.navigation)
             {
                 assert step.path != null;
                 if (!step.path.isCurved) {
                     for (Position dest : step.path.positions) {
+                        if (manager.opMode.isStopRequested())
+                        {
+                            break;
+                        }
                         while (!navigationEngine.isTargetReached(dest) && !manager.opMode.isStopRequested()) {
                             navigationEngine.navigateInALinearFashion(dest);
                             runContinuousActions();

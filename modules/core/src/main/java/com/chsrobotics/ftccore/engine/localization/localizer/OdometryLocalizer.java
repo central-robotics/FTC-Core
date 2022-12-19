@@ -18,8 +18,9 @@ public class OdometryLocalizer extends Localizer{
 
     HardwareManager hardware;
 
-    private int lastLatPos, lastLongPos;
-    private double lastTheta;
+    private int lastLat = 0, lastLon = 0;
+    private double lastLatAdjusted = 0, lastLonAdjusted = 0;
+    private double lastHeading;
 
     public OdometryLocalizer(Position initialState, HardwareManager hardware) {
         super(initialState, hardware);
@@ -28,30 +29,30 @@ public class OdometryLocalizer extends Localizer{
 
 
     public double getThetaDifference(double current, double old) {
-        double thetaError = current - old;
+        double headingError = current - old;
         boolean isCounterClockwise = false;
 
-        if (Math.abs(current - (old - (2 * Math.PI))) < Math.abs(thetaError))
+        if (Math.abs(current - (old - (2 * Math.PI))) < Math.abs(headingError))
         {
-            thetaError = current - (old - (2 * Math.PI));
+            headingError = current - (old - (2 * Math.PI));
             isCounterClockwise = true;
         }
 
-        if (Math.abs(current - (old + (2 * Math.PI))) < thetaError)
+        if (Math.abs(current - (old + (2 * Math.PI))) < headingError)
         {
-            thetaError = current - (old + (2 * Math.PI));
+            headingError = current - (old + (2 * Math.PI));
             isCounterClockwise = true;
         }
 
-        if (thetaError > 0 && (thetaError < Math.PI)) {
+        if (headingError > 0 && (headingError < Math.PI)) {
             isCounterClockwise = true;
         }
 
-        if (thetaError < 0 && (thetaError > -Math.PI)) {
+        if (headingError < 0 && (headingError > -Math.PI)) {
             isCounterClockwise = false;
         }
 
-        return Math.abs(thetaError) * (isCounterClockwise ? 1 : -1);
+        return Math.abs(headingError) * (isCounterClockwise ? 1 : -1);
     }
 
     @Override
@@ -59,35 +60,57 @@ public class OdometryLocalizer extends Localizer{
         //Encoder values. These are in ticks. We will later convert this to a usable distance.
 
         //Record encoder values.
-        int lateralPos = hardware.accessoryOdometryPods[0].getCurrentPosition();
-        int longitudinalPos = hardware.accessoryOdometryPods[1].getCurrentPosition();
+        int lat = hardware.accessoryOdometryPods[0].getCurrentPosition();
+        int lon = hardware.accessoryOdometryPods[1].getCurrentPosition();
 
-        double theta = hardware.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS).firstAngle - hardware.offset;
-        if (theta > 2 * Math.PI) {
-            theta -= 2 * Math.PI;
-        } else if (theta < 0) {
-            theta += 2 * Math.PI;
+        double heading = hardware.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS).firstAngle - hardware.offset;
+        if (heading > 2 * Math.PI) {
+            heading -= 2 * Math.PI;
+        } else if (heading < 0) {
+            heading += 2 * Math.PI;
         }
 
-        //Displacement values
+        //Calculate displacement values in mm
+        double deltaX = (lat - lastLat) * 0.01358149;
+        double deltaY = (lon - lastLon) * 0.01358149;
 
-        //Calculate displacement values
-        double latDisp = (lateralPos - lastLatPos) * 0.05368932757;
-        double longDisp = (longitudinalPos - lastLongPos) * 0.05368932757;
+        double magnitude = Math.sqrt((deltaY * deltaY) + (deltaX * deltaX));
+        double direction = -Math.atan2(deltaX, deltaY) - heading;
+
+        double latAdjusted = Math.sin(direction) * magnitude;
+        double lonAdjusted = Math.cos(direction) * magnitude;
+
+//        double deltaXf = latAdjusted - lastLatAdjusted;
+//        double deltaYf = lonAdjusted - lastLonAdjusted;
 
         //Store encoder values so we can use them in calculating displacement.
-        lastLatPos = lateralPos;
-        lastLongPos = longitudinalPos;
-
-        double deltaXf = latDisp * Math.cos(theta) - latDisp * Math.sin(theta);
-        double deltaYf = longDisp * Math.cos(theta) + longDisp * Math.sin(theta);
+        lastLat = lat;
+        lastLon = lon;
+        lastLatAdjusted = latAdjusted;
+        lastLonAdjusted = lonAdjusted;
 
         Position robotPosition = new Position();
-        robotPosition.x = previousPosition.x - deltaXf;
-        robotPosition.y = previousPosition.y - deltaYf;
-        robotPosition.t = theta;
+        robotPosition.x = previousPosition.x + latAdjusted;
+        robotPosition.y = previousPosition.y + lonAdjusted;
+        robotPosition.t = heading;
 
         if (robotPosition.x == 0) robotPosition.x = 0.0000001;
+
+        if (false) {
+            hardware.opMode.telemetry.addData("deltaX", deltaX);
+            hardware.opMode.telemetry.addData("deltaY", deltaY);
+            hardware.opMode.telemetry.addData("direction", direction);
+            hardware.opMode.telemetry.addData("heading", heading);
+            hardware.opMode.telemetry.addData("magnitude", magnitude);
+            hardware.opMode.telemetry.addData("latAdjusted", latAdjusted);
+            hardware.opMode.telemetry.addData("lonAdjusted", lonAdjusted);
+//        hardware.opMode.telemetry.addData("deltaXf", deltaXf);
+//        hardware.opMode.telemetry.addData("deltaYf", deltaYf);
+            hardware.opMode.telemetry.addData("robotX", robotPosition.x);
+            hardware.opMode.telemetry.addData("robotY", robotPosition.y);
+            hardware.opMode.telemetry.addData("rawX", hardware.accessoryOdometryPods[0].getCurrentPosition());
+            hardware.opMode.telemetry.addData("rawY", hardware.accessoryOdometryPods[1].getCurrentPosition());
+        }
 
         return robotPosition;
 
@@ -100,25 +123,25 @@ public class OdometryLocalizer extends Localizer{
 //        deltaX = (robotLfDisp + robotRfDisp - robotRbDisp - robotLbDisp) / (2 * Math.sqrt(2));
 //        deltaY = (robotLfDisp - robotRfDisp - robotRbDisp + robotLbDisp) / (2 * Math.sqrt(2));
 
-        //Robot theta
-/*        double theta;
+        //Robot heading
+/*        double heading;
 
-        //Compute robot theta
-        theta = hardware.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS).firstAngle - hardware.offset;
-        if (theta > 2 * Math.PI) {
-            theta -= 2 * Math.PI;
-        } else if (theta < 0) {
-            theta += 2 * Math.PI;
+        //Compute robot heading
+        heading = hardware.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS).firstAngle - hardware.offset;
+        if (heading > 2 * Math.PI) {
+            heading -= 2 * Math.PI;
+        } else if (heading < 0) {
+            heading += 2 * Math.PI;
         }
 
         //Compute displacement in field reference frame.
-        double deltaXf = deltaX * Math.cos(theta) - deltaY * Math.sin(theta);
-        double deltaYf = deltaY * Math.cos(theta) + deltaX * Math.sin(theta);
+        double deltaXf = deltaX * Math.cos(heading) - deltaY * Math.sin(heading);
+        double deltaYf = deltaY * Math.cos(heading) + deltaX * Math.sin(heading);
 
         Position robotPosition = new Position();
         robotPosition.x = previousPosition.x - deltaXf;
         robotPosition.y = previousPosition.y - deltaYf;
-        robotPosition.t = theta;
+        robotPosition.t = heading;
 
         if (robotPosition.x == 0) robotPosition.x = 0.0000001;
 

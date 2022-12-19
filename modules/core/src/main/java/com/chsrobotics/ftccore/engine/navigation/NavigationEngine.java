@@ -56,7 +56,7 @@ public class NavigationEngine {
 
     public void navigateInALinearFashion(Position destination)
     {
-        if (hardware.debugMode) {
+        if (hardware.debugMode && false) {
             hardware.opMode.telemetry.addData("X", position.x);
             hardware.opMode.telemetry.addData("Y", position.y);
             hardware.opMode.telemetry.addData("T", position.t);
@@ -67,14 +67,10 @@ public class NavigationEngine {
 
         position = localization.getCurrentPosition();
 
-        double orientation, negOutput, posOutput;
+//        double orientation = Math.atan2(position.y - destination.y, destination.x - position.x) - Math.PI / 4 + position.t;
+        double orientation = (3 * Math.PI / 2) - (Math.PI / 4);
 
-        if (destination.x - position.x > 0)
-            orientation = Math.atan(-linearController.getSlope(destination, position)) - Math.PI / 4 + position.t;
-        else
-            orientation = Math.atan(-linearController.getSlope(destination, position)) + Math.PI - Math.PI / 4 + position.t;
-
-        if (hardware.debugMode) {
+        if (hardware.debugMode || true) {
             hardware.opMode.telemetry.addData("X", position.x);
             hardware.opMode.telemetry.addData("Y", position.y);
             hardware.opMode.telemetry.addData("T", position.t);
@@ -86,16 +82,15 @@ public class NavigationEngine {
 
         magnitude = linearController.getOutput(error, 0);
 
-        negOutput = magnitude * Math.sin(orientation);
+        double negOutput = magnitude * Math.sin(orientation);
 
+        double posOutput = magnitude * Math.cos(orientation);
         if (orientation == 0) {
             posOutput = negOutput;
-        } else {
-            posOutput = magnitude * Math.cos(orientation);
         }
 
-        negOutput = Math.min(negOutput, 650);
-        posOutput = Math.min(posOutput, 650);
+        negOutput = Math.min(negOutput, 150);
+        posOutput = Math.min(posOutput, 150);
 
         double thetaOutput = Math.abs(thetaError) >= 0.05 ? rotationController.getOutput(Math.abs(thetaError), 0) : 0;
 
