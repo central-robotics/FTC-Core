@@ -47,7 +47,7 @@ public class Drive {
             double rot_power;
             Orientation gyro_angles;
 
-            joystick_y = gamepad1.left_stick_y;
+            joystick_y = -gamepad1.left_stick_y;
             joystick_x = gamepad1.left_stick_x == 0 ? 0.001 : gamepad1.left_stick_x;
 
             rot_power = (manager.thetaReversed ? -1 : 1) * gamepad1.right_stick_x;
