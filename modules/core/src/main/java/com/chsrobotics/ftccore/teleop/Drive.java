@@ -48,7 +48,7 @@ public class Drive {
             Orientation gyro_angles;
 
             joystick_y = gamepad1.left_stick_y;
-            joystick_x = gamepad1.left_stick_x == 0 ? 0.001 : gamepad1.left_stick_x;
+            joystick_x = gamepad1.left_stick_x == 0 ? 0.001 : -gamepad1.left_stick_x;
 
             rot_power = (manager.thetaReversed ? -1 : 1) * gamepad1.right_stick_x;
 
@@ -72,8 +72,8 @@ public class Drive {
 
             theta *= manager.thetaReversed ? -1 : 1;
 
-            orientation = (joystick_x > 0) ? (Math.atan(joystick_y / joystick_x) - Math.PI / 4) - theta :
-                    (Math.atan(joystick_y / joystick_x) + Math.PI - Math.PI / 4) - theta;
+            orientation = (joystick_x > 0) ? (Math.atan(joystick_y / joystick_x) - Math.PI / 4) + theta :
+                    (Math.atan(joystick_y / joystick_x) + Math.PI - Math.PI / 4) + theta;
 
             negative_power = (joystick_power * Math.sin(orientation));
             positive_power = (orientation != 0) ? (joystick_power * Math.cos(orientation)) :

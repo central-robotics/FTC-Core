@@ -67,8 +67,7 @@ public class NavigationEngine {
 
         position = localization.getCurrentPosition();
 
-//        double orientation = Math.atan2(position.y - destination.y, destination.x - position.x) - Math.PI / 4 + position.t;
-        double orientation = (3 * Math.PI / 2) - (Math.PI / 4);
+        double orientation = Math.atan2(position.y - destination.y, destination.x - position.x) - Math.PI / 4 + position.t;
 
         if (hardware.debugMode || true) {
             hardware.opMode.telemetry.addData("X", position.x);
