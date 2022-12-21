@@ -134,6 +134,8 @@ public class HardwareManager {
             accessoryCameras = new WebcamName[0];
             accessoryMotors = new DcMotorEx[0];
             accessoryServos = new Servo[0];
+            accessoryOdometryPods = new DcMotorEx[0];
+            accessoryContinuousServo = new CRServo[0];
             return;
         }
 

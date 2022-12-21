@@ -49,7 +49,6 @@ public class LocalizationEngine {
 
         lastPosition = currentPosition;
         currentPosition = positions.get(0);
-
         return currentPosition; //Temporarily returning only encoder based position.
     }
 
