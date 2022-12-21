@@ -27,6 +27,9 @@ public class Config {
     public boolean useCV;
     public boolean thetaReversed;
 
+    public float encoderRes;
+    public int wheelDiameterMM;
+
     public static class Builder {
         private String[] driveMotors;
         private String imu;
@@ -39,6 +42,8 @@ public class Config {
         private double linearSpeed = 1, rotSpeed = 1;
         private BNO055IMU.Parameters params;
         public DcMotorSimple.Direction direction = DcMotorSimple.Direction.FORWARD;
+        private float encoderRes;
+        private int wheelDiameterMM;
 
         private boolean debugMode;
         private boolean reversed = false;
@@ -135,9 +140,11 @@ public class Config {
          * @param encoderRes the resolution of the motor encoder. Usually found on website
          * @param wheelDiameterMM the diameter of the wheel in mm;
          */
-        public Builder setWheelProperties(double encoderRes, int wheelDiameterMM)
+        public Builder setWheelProperties(float encoderRes, int wheelDiameterMM)
         {
             //TODO
+            this.encoderRes = encoderRes;
+            this.wheelDiameterMM = wheelDiameterMM;
             return this;
         }
 
@@ -212,6 +219,8 @@ public class Config {
             config.direction = direction;
             config.useCV = useCV;
             config.thetaReversed = thetaReversed;
+            config.encoderRes = encoderRes;
+            config.wheelDiameterMM = wheelDiameterMM;
 
             return config;
         }

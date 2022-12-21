@@ -56,7 +56,7 @@ public class NavigationEngine {
 
     public void navigateInALinearFashion(Position destination)
     {
-        if (hardware.debugMode && false) {
+        if (hardware.debugMode) {
             hardware.opMode.telemetry.addData("X", position.x);
             hardware.opMode.telemetry.addData("Y", position.y);
             hardware.opMode.telemetry.addData("T", position.t);
@@ -69,7 +69,7 @@ public class NavigationEngine {
 
         double orientation = Math.atan2(position.y - destination.y, destination.x - position.x) - Math.PI / 4 + position.t;
 
-        if (hardware.debugMode || true) {
+        if (hardware.debugMode) {
             hardware.opMode.telemetry.addData("X", position.x);
             hardware.opMode.telemetry.addData("Y", position.y);
             hardware.opMode.telemetry.addData("T", position.t);
@@ -93,10 +93,10 @@ public class NavigationEngine {
 
         double thetaOutput = Math.abs(thetaError) >= 0.05 ? rotationController.getOutput(Math.abs(thetaError), 0) : 0;
 
-        hardware.getLeftFrontMotor().setVelocity((-posOutput) + ((isCounterClockwise ? -1 : 1) * thetaOutput));
-        hardware.getRightFrontMotor().setVelocity(( negOutput) + ((isCounterClockwise ? -1 : 1) * thetaOutput));
-        hardware.getLeftBackMotor().setVelocity((-negOutput) + ((isCounterClockwise ? -1 : 1) * thetaOutput));
-        hardware.getRightBackMotor().setVelocity((posOutput) + ((isCounterClockwise ? -1 : 1) * thetaOutput));
+        hardware.getLeftFrontMotor().setVelocity((-posOutput) + ((isCounterClockwise ? 1 : -1) * thetaOutput));
+        hardware.getRightFrontMotor().setVelocity(( negOutput) + ((isCounterClockwise ? 1 : -1) * thetaOutput));
+        hardware.getLeftBackMotor().setVelocity((-negOutput) + ((isCounterClockwise ? 1 : -1) * thetaOutput));
+        hardware.getRightBackMotor().setVelocity((posOutput) + ((isCounterClockwise ? 1 : -1) * thetaOutput));
     }
 
     public void navigateInANonLinearFashion(List<Position> positions)

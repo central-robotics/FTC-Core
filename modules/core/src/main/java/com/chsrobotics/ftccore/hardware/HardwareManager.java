@@ -68,6 +68,9 @@ public class HardwareManager {
     public boolean imuLocalEnabled = true;
     public boolean thetaReversed = false;
 
+    public float encoderRes;
+    public int wheelDiameterMM;
+
     /**
      * Creates a hardware management interface and initializes all the hardware as specified by the configuration.
      * @param config The robot configuration. This can be created through the ConfigBuilder class.
@@ -91,6 +94,9 @@ public class HardwareManager {
         linearSpeed = config.linearSpeed;
         rotSpeed = config.rotSpeed;
         thetaReversed = config.thetaReversed;
+
+        encoderRes = config.encoderRes;
+        wheelDiameterMM = config.wheelDiameterMM;
     }
 
     private void initializeDriveMotors(Config config)
