@@ -19,10 +19,12 @@ public class EncoderLocalizer extends Localizer{
     HardwareManager hardware;
 
     private int lastLfPos, lastRfPos, lastRbPos, lastLbPos;
+    private double mmPerTick;
 
     public EncoderLocalizer(Position initialState, HardwareManager hardware) {
         super(initialState, hardware);
         this.hardware = hardware;
+        mmPerTick = (Math.PI * hardware.wheelDiameterMM) / hardware.encoderRes;
     }
 
     @Override
@@ -40,10 +42,10 @@ public class EncoderLocalizer extends Localizer{
         double lfDisp, rfDisp, rbDisp, lbDisp;
 
         //Calculate displacement values
-        lfDisp = (lfPos - lastLfPos) * MiscConstants.DISTANCE_PER_TICK;
-        rfDisp = (rfPos - lastRfPos) * MiscConstants.DISTANCE_PER_TICK;
-        rbDisp = (rbPos - lastRbPos) * MiscConstants.DISTANCE_PER_TICK;
-        lbDisp = (lbPos - lastLbPos) * MiscConstants.DISTANCE_PER_TICK;
+        lfDisp = (lfPos - lastLfPos) * mmPerTick;
+        rfDisp = (rfPos - lastRfPos) * mmPerTick;
+        rbDisp = (rbPos - lastRbPos) * mmPerTick;
+        lbDisp = (lbPos - lastLbPos) * mmPerTick;
 
         //Store encoder values so we can use them in calculating displacement.
         lastLfPos = lfPos;
@@ -71,7 +73,7 @@ public class EncoderLocalizer extends Localizer{
 
         //Compute displacement in robot reference frame.
         deltaX = (robotLfDisp + robotRfDisp - robotRbDisp - robotLbDisp) / (2 * Math.sqrt(2));
-        deltaY = -(robotLfDisp - robotRfDisp - robotRbDisp + robotLbDisp) / (2 * Math.sqrt(2));
+        deltaY = (robotLfDisp - robotRfDisp - robotRbDisp + robotLbDisp) / (2 * Math.sqrt(2));
 
         //Robot theta
         double theta;

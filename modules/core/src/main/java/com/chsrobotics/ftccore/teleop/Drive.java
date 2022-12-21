@@ -72,8 +72,7 @@ public class Drive {
 
             theta *= manager.thetaReversed ? -1 : 1;
 
-            orientation = (joystick_x > 0) ? (Math.atan(joystick_y / joystick_x) - Math.PI / 4) + theta :
-                    (Math.atan(joystick_y / joystick_x) + Math.PI - Math.PI / 4) + theta;
+            orientation = (Math.atan2(joystick_y, joystick_x) - Math.PI / 4) - theta;
 
             negative_power = (joystick_power * Math.sin(orientation));
             positive_power = (orientation != 0) ? (joystick_power * Math.cos(orientation)) :

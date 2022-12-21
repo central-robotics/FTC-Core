@@ -22,9 +22,12 @@ public class OdometryLocalizer extends Localizer{
     private double lastLatAdjusted = 0, lastLonAdjusted = 0;
     private double lastHeading;
 
+    private double mmPerTick;
+
     public OdometryLocalizer(Position initialState, HardwareManager hardware) {
         super(initialState, hardware);
         this.hardware = hardware;
+        mmPerTick = (hardware.wheelDiameterMM * Math.PI) / hardware.encoderRes;
     }
 
 
@@ -71,8 +74,8 @@ public class OdometryLocalizer extends Localizer{
         }
 
         //Calculate displacement values in mm
-        double latDistance = (lat - lastLat) * 0.01358149;
-        double lonDistance = (lon - lastLon) * 0.01358149;
+        double latDistance = (lat - lastLat) * mmPerTick;
+        double lonDistance = (lon - lastLon) * mmPerTick;
 
         double magnitude = Math.sqrt(Math.pow(latDistance, 2) * Math.pow(lonDistance, 2));
         double direction = -Math.atan2(latDistance, lonDistance) - heading;
