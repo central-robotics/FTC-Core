@@ -24,7 +24,7 @@ public class EncoderLocalizer extends Localizer{
     public EncoderLocalizer(Position initialState, HardwareManager hardware) {
         super(initialState, hardware);
         this.hardware = hardware;
-        mmPerTick = (Math.PI * hardware.wheelDiameterMM) / hardware.encoderRes;
+        mmPerTick = (Math.PI * hardware.wheelDiameter) / hardware.encoderRes;
     }
 
     @Override

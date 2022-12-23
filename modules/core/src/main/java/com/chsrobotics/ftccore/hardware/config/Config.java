@@ -3,10 +3,8 @@ package com.chsrobotics.ftccore.hardware.config;
 import com.chsrobotics.ftccore.hardware.config.accessory.Accessory;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.PIDCoefficients;
-import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 import java.util.ArrayList;
 
@@ -28,7 +26,11 @@ public class Config {
     public boolean thetaReversed;
 
     public float encoderRes;
-    public int wheelDiameterMM;
+    public double wheelDiameter;
+    public double latWheelOffset;
+    public double lonWheelOffset;
+    public double linearTolerance;
+    public double rotTolerance;
 
     public static class Builder {
         private String[] driveMotors;
@@ -43,7 +45,11 @@ public class Config {
         private BNO055IMU.Parameters params;
         public DcMotorSimple.Direction direction = DcMotorSimple.Direction.FORWARD;
         private float encoderRes;
-        private int wheelDiameterMM;
+        private double wheelDiameter;
+        private double latWheelOffset;
+        private double lonWheelOffset;
+        private double linearTolerance;
+        private double rotTolerance;
 
         private boolean debugMode;
         private boolean reversed = false;
@@ -138,13 +144,22 @@ public class Config {
          * Calculates distance per tick for accurate autonomous movement. If this is not done correct, robot will still navigate,
          * but distances will not be accurate.
          * @param encoderRes the resolution of the motor encoder. Usually found on website
-         * @param wheelDiameterMM the diameter of the wheel in mm;
+         * @param wheelDiameter the diameter of the wheel in mm;
          */
-        public Builder setWheelProperties(float encoderRes, int wheelDiameterMM)
+        public Builder setOdometryWheelProperties(float encoderRes, double wheelDiameter, double latWheelOffset, double lonWheelOffset)
         {
             //TODO
             this.encoderRes = encoderRes;
-            this.wheelDiameterMM = wheelDiameterMM;
+            this.wheelDiameter = wheelDiameter;
+            this.latWheelOffset = latWheelOffset;
+            this.lonWheelOffset = lonWheelOffset;
+            return this;
+        }
+
+        public Builder setNavigationTolerances(double linearTolerance, double rotTolerance)
+        {
+            this.linearTolerance = linearTolerance;
+            this.rotTolerance = rotTolerance;
             return this;
         }
 
@@ -220,7 +235,11 @@ public class Config {
             config.useCV = useCV;
             config.thetaReversed = thetaReversed;
             config.encoderRes = encoderRes;
-            config.wheelDiameterMM = wheelDiameterMM;
+            config.wheelDiameter = wheelDiameter;
+            config.latWheelOffset = latWheelOffset;
+            config.lonWheelOffset = lonWheelOffset;
+            config.linearTolerance = linearTolerance;
+            config.rotTolerance = rotTolerance;
 
             return config;
         }

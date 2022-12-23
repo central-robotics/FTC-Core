@@ -51,33 +51,14 @@ public class NavigationEngine {
         if (thetaError < 0 && (thetaError > -Math.PI))
             isCounterClockwise = false;
 
-        return (error < 40 && Math.abs(thetaError) < 0.1);
+        return (error < hardware.linearTolerance && Math.abs(thetaError) < hardware.rotTolerance);
     }
 
     public void navigateInALinearFashion(Position destination)
     {
-        if (hardware.debugMode) {
-            hardware.opMode.telemetry.addData("X", position.x);
-            hardware.opMode.telemetry.addData("Y", position.y);
-            hardware.opMode.telemetry.addData("T", position.t);
-            hardware.opMode.telemetry.addData("error", error);
-            hardware.opMode.telemetry.addData("thetaError", thetaError);
-            hardware.opMode.telemetry.update();
-        }
-
         position = localization.getCurrentPosition();
 
-        double orientation = Math.atan2(position.y - destination.y, destination.x - position.x) - Math.PI / 4 + position.t;
-
-        if (hardware.debugMode) {
-            hardware.opMode.telemetry.addData("X", position.x);
-            hardware.opMode.telemetry.addData("Y", position.y);
-            hardware.opMode.telemetry.addData("T", position.t);
-            hardware.opMode.telemetry.addData("error", error);
-            hardware.opMode.telemetry.addData("thetaError", thetaError);
-            hardware.opMode.telemetry.addData("orientation", orientation);
-            hardware.opMode.telemetry.update();
-        }
+        double orientation = Math.atan2(destination.y - position.y, destination.x - position.x) - Math.PI / 4 - position.t;
 
         magnitude = linearController.getOutput(error, 0);
 
@@ -88,15 +69,26 @@ public class NavigationEngine {
             posOutput = negOutput;
         }
 
-        negOutput = Math.min(negOutput, 150);
-        posOutput = Math.min(posOutput, 150);
-
         double thetaOutput = Math.abs(thetaError) >= 0.05 ? rotationController.getOutput(Math.abs(thetaError), 0) : 0;
 
+        if (hardware.debugMode) {
+            hardware.opMode.telemetry.addData("X", position.x);
+            hardware.opMode.telemetry.addData("Y", position.y);
+            hardware.opMode.telemetry.addData("T", position.t);
+            hardware.opMode.telemetry.addData("error", error);
+			hardware.opMode.telemetry.addData("direction", orientation);
+            hardware.opMode.telemetry.update();
+        }
+
         hardware.getLeftFrontMotor().setVelocity((-posOutput) + ((isCounterClockwise ? 1 : -1) * thetaOutput));
-        hardware.getRightFrontMotor().setVelocity(( negOutput) + ((isCounterClockwise ? 1 : -1) * thetaOutput));
+        hardware.getRightFrontMotor().setVelocity((negOutput) + ((isCounterClockwise ? 1 : -1) * thetaOutput));
         hardware.getLeftBackMotor().setVelocity((-negOutput) + ((isCounterClockwise ? 1 : -1) * thetaOutput));
         hardware.getRightBackMotor().setVelocity((posOutput) + ((isCounterClockwise ? 1 : -1) * thetaOutput));
+//
+//        hardware.driveMotors[0].setPower(0);
+//        hardware.driveMotors[1].setPower(0);
+//        hardware.driveMotors[2].setPower(0);
+//        hardware.driveMotors[3].setPower(0);
     }
 
     public void navigateInANonLinearFashion(List<Position> positions)

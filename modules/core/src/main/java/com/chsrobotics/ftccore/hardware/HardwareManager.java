@@ -69,7 +69,12 @@ public class HardwareManager {
     public boolean thetaReversed = false;
 
     public float encoderRes;
-    public int wheelDiameterMM;
+    public double wheelDiameter;
+    public double latWheelOffset;
+    public double lonWheelOffset;
+
+    public double linearTolerance;
+    public double rotTolerance;
 
     /**
      * Creates a hardware management interface and initializes all the hardware as specified by the configuration.
@@ -96,7 +101,12 @@ public class HardwareManager {
         thetaReversed = config.thetaReversed;
 
         encoderRes = config.encoderRes;
-        wheelDiameterMM = config.wheelDiameterMM;
+        wheelDiameter = config.wheelDiameter;
+        latWheelOffset = config.latWheelOffset;
+        lonWheelOffset = config.lonWheelOffset;
+
+        linearTolerance = config.linearTolerance;
+        rotTolerance = config.rotTolerance;
     }
 
     private void initializeDriveMotors(Config config)
