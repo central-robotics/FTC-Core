@@ -56,6 +56,7 @@ public class NavigationEngine {
 
     public void navigateInALinearFashion(Position destination)
     {
+
         position = localization.getCurrentPosition();
 
         double orientation = Math.atan2(destination.y - position.y, destination.x - position.x) - Math.PI / 4 - position.t;
@@ -93,6 +94,8 @@ public class NavigationEngine {
 
     public void navigateInANonLinearFashion(List<Position> positions)
     {
+
+
 
         double distTraveled = 0;
         Position lastPosition = localization.getCurrentPosition();

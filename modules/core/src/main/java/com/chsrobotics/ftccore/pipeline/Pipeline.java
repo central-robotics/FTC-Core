@@ -18,6 +18,7 @@ public class Pipeline {
     private HardwareManager manager;
     private ArrayList<PipelineStep> steps;
     private ArrayList<ContinuousAction> continuousActions;
+    private final double conversion = Math.PI / 180;
 
     private Pipeline(HardwareManager manager, ArrayList<PipelineStep> steps, ArrayList<ContinuousAction> continuousActions) {
         this.manager = manager;
@@ -47,6 +48,8 @@ public class Pipeline {
                 assert step.path != null;
                 if (!step.path.isCurved) {
                     for (Position dest : step.path.positions) {
+                        if (manager.useDegrees)
+                            dest.t *= conversion;
                         if (manager.opMode.isStopRequested())
                         {
                             break;

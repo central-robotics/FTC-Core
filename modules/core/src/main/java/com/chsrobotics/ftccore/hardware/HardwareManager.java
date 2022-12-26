@@ -76,6 +76,8 @@ public class HardwareManager {
     public double linearTolerance;
     public double rotTolerance;
 
+    public boolean useDegrees;
+
     /**
      * Creates a hardware management interface and initializes all the hardware as specified by the configuration.
      * @param config The robot configuration. This can be created through the ConfigBuilder class.
@@ -107,6 +109,8 @@ public class HardwareManager {
 
         linearTolerance = config.linearTolerance;
         rotTolerance = config.rotTolerance;
+
+        useDegrees = config.useDegrees;
     }
 
     private void initializeDriveMotors(Config config)

@@ -31,6 +31,7 @@ public class Config {
     public double lonWheelOffset;
     public double linearTolerance;
     public double rotTolerance;
+    public boolean useDegrees = false;
 
     public static class Builder {
         private String[] driveMotors;
@@ -48,10 +49,12 @@ public class Config {
         private double wheelDiameter;
         private double latWheelOffset;
         private double lonWheelOffset;
-        private double linearTolerance;
-        private double rotTolerance;
+        private double linearTolerance = 15;
+        private double rotTolerance = 0.1;
 
         private boolean debugMode;
+        private boolean useDegrees = false;
+
         private boolean reversed = false;
         private boolean useCV = false;
         public boolean thetaReversed = false;
@@ -89,6 +92,12 @@ public class Config {
          */
         public Builder setDebugMode(boolean mode) {
             debugMode = mode;
+            return this;
+        }
+
+        public Builder useDegrees(boolean mode)
+        {
+            useDegrees = mode;
             return this;
         }
 
@@ -240,6 +249,7 @@ public class Config {
             config.lonWheelOffset = lonWheelOffset;
             config.linearTolerance = linearTolerance;
             config.rotTolerance = rotTolerance;
+            config.useDegrees = useDegrees;
 
             return config;
         }

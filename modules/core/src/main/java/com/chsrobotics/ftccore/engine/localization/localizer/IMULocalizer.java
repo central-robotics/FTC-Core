@@ -3,6 +3,9 @@ package com.chsrobotics.ftccore.engine.localization.localizer;
 import com.chsrobotics.ftccore.geometry.Position;
 import com.chsrobotics.ftccore.hardware.HardwareManager;
 
+import org.apache.commons.math3.linear.ArrayRealVector;
+import org.apache.commons.math3.linear.RealVector;
+
 public class IMULocalizer extends Localizer {
 
     /*
