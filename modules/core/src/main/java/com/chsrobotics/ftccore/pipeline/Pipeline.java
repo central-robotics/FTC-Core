@@ -48,6 +48,8 @@ public class Pipeline {
                 assert step.path != null;
                 if (!step.path.isCurved) {
                     for (Position dest : step.path.positions) {
+                        navigationEngine.linearController.resetSum();
+                        navigationEngine.rotationController.resetSum();
                         if (manager.useDegrees)
                             dest.t *= conversion;
                         if (manager.opMode.isStopRequested())

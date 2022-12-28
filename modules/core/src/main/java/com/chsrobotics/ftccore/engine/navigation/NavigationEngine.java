@@ -4,14 +4,18 @@ import com.chsrobotics.ftccore.engine.localization.LocalizationEngine;
 import com.chsrobotics.ftccore.geometry.Position;
 import com.chsrobotics.ftccore.hardware.HardwareManager;
 import com.chsrobotics.ftccore.engine.navigation.control.*;
+import com.qualcomm.robotcore.util.ElapsedTime;
+
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
 
 import java.util.List;
 
 public class NavigationEngine {
     private final HardwareManager hardware;
     public final LocalizationEngine localization;
-    private final PID linearController;
-    private final PID rotationController;
+    public final PID linearController;
+    public final PID rotationController;
     public Position position = new Position();
     double t;
     double magnitude;
@@ -85,20 +89,15 @@ public class NavigationEngine {
         hardware.getRightFrontMotor().setVelocity((negOutput) + ((isCounterClockwise ? 1 : -1) * thetaOutput));
         hardware.getLeftBackMotor().setVelocity((-negOutput) + ((isCounterClockwise ? 1 : -1) * thetaOutput));
         hardware.getRightBackMotor().setVelocity((posOutput) + ((isCounterClockwise ? 1 : -1) * thetaOutput));
-//
-//        hardware.driveMotors[0].setPower(0);
-//        hardware.driveMotors[1].setPower(0);
-//        hardware.driveMotors[2].setPower(0);
-//        hardware.driveMotors[3].setPower(0);
     }
 
     public void navigateInANonLinearFashion(List<Position> positions)
     {
-
-
+        linearController.resetSum();
 
         double distTraveled = 0;
-        Position lastPosition = localization.getCurrentPosition();
+        t = 0;
+
 
         double[] x = new double[positions.size()];
         double[] y = new double[positions.size()];
@@ -112,23 +111,25 @@ public class NavigationEngine {
 
         ParametricSpline spline = splineHelper.computeSpline(x, y);
 
+        Position lastPosition = localization.getCurrentPosition();
+
         while (!isTargetReached(positions.get(positions.size() - 1)) && t < 1 && !hardware.opMode.isStopRequested())
         {
             position = localization.getCurrentPosition();
 
-            double orientation, negOutput, posOutput;
+            double orientation, negOutput, posOutput, magnitude;
 
-            distTraveled += Math.sqrt(Math.pow(position.x - lastPosition.x, 2) + Math.pow(position.y - lastPosition.y, 2)) / 1.2;
+            distTraveled += Math.sqrt(Math.pow(position.x - lastPosition.x, 2) + Math.pow(position.y - lastPosition.y, 2));
 
             t = distTraveled / spline.splineDistance;
 
-            if (t >= 1)
+            if (t > 1)
                 break;
 
             if (spline.xSpline.derivative().value(t) > 0)
-                orientation = Math.atan(spline.getDerivative(t)) - Math.PI / 4 - position.t;
+                orientation = Math.atan(spline.getDerivative(t)) - (Math.PI / 4);
             else
-                orientation = Math.atan(spline.getDerivative(t)) + Math.PI - Math.PI / 4 - position.t;
+                orientation = Math.atan(spline.getDerivative(t))  + Math.PI- Math.PI / 4;
             negOutput = 1000 * Math.sin(orientation);
 
             if (orientation == 0) {
@@ -140,11 +141,13 @@ public class NavigationEngine {
             double thetaOutput = rotationController.getOutput(Math.abs(thetaError), 0);
 
             lastPosition = position;
+
             hardware.opMode.telemetry.addData("t", t);
-            hardware.opMode.telemetry.addData("magnitude", magnitude);
             hardware.opMode.telemetry.addData("dist traveled", distTraveled);
             hardware.opMode.telemetry.addData("pos", posOutput);
             hardware.opMode.telemetry.addData("neg", negOutput);
+            hardware.opMode.telemetry.addData("X", position.x);
+            hardware.opMode.telemetry.addData("Y", position.y);
             hardware.opMode.telemetry.update();
 
             hardware.getLeftFrontMotor().setVelocity((-posOutput) - ((isCounterClockwise ? -1 : 1) * thetaOutput));
@@ -152,8 +155,6 @@ public class NavigationEngine {
             hardware.getLeftBackMotor().setVelocity((-negOutput) - ((isCounterClockwise ? -1 : 1) * thetaOutput));
             hardware.getRightBackMotor().setVelocity((posOutput) - ((isCounterClockwise ? -1 : 1) * thetaOutput));
         }
-
-        navigateInALinearFashion(positions.get(positions.size() - 1));
 
         hardware.getLeftFrontMotor().setVelocity(0);
         hardware.getRightFrontMotor().setVelocity(0);

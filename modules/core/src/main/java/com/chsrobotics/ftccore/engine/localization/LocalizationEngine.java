@@ -9,8 +9,13 @@ import com.chsrobotics.ftccore.engine.localization.localizer.VisionLocalizer;
 import com.chsrobotics.ftccore.geometry.Position;
 import com.chsrobotics.ftccore.hardware.HardwareManager;
 
+import org.apache.commons.math3.filter.DefaultMeasurementModel;
+import org.apache.commons.math3.filter.DefaultProcessModel;
 import org.apache.commons.math3.filter.KalmanFilter;
 import org.apache.commons.math3.filter.ProcessModel;
+import org.apache.commons.math3.linear.Array2DRowRealMatrix;
+import org.apache.commons.math3.linear.RealMatrix;
+import org.apache.commons.math3.linear.RealVector;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,7 +36,6 @@ public class LocalizationEngine {
     public LocalizationEngine(HardwareManager hardware)
     {
         this.hardware = hardware;
-
         initializeLocalization();
     }
 
@@ -54,6 +58,8 @@ public class LocalizationEngine {
         currentPosition = positions.get(0);
         return currentPosition; //Temporarily returning only encoder based position.
     }
+
+
 
     private void initializeLocalization()
     {
