@@ -4,11 +4,13 @@ import com.chsrobotics.ftccore.actions.Action;
 import com.chsrobotics.ftccore.actions.ContinuousAction;
 import com.chsrobotics.ftccore.engine.localization.LocalizationEngine;
 import com.chsrobotics.ftccore.engine.navigation.NavigationEngine;
+import com.chsrobotics.ftccore.engine.navigation.path.MotionProfile;
 import com.chsrobotics.ftccore.engine.navigation.path.Path;
 import com.chsrobotics.ftccore.geometry.Position;
 import com.chsrobotics.ftccore.hardware.HardwareManager;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -20,10 +22,14 @@ public class Pipeline {
     private ArrayList<ContinuousAction> continuousActions;
     private final double conversion = Math.PI / 180;
 
+    public static ElapsedTime time = new ElapsedTime();
+
     private Pipeline(HardwareManager manager, ArrayList<PipelineStep> steps, ArrayList<ContinuousAction> continuousActions) {
         this.manager = manager;
         this.steps = steps;
         this.continuousActions = continuousActions;
+
+        time.startTime();
     }
 
     private void runContinuousActions() {
@@ -56,8 +62,23 @@ public class Pipeline {
                         {
                             break;
                         }
+
+                        if (step.path.profile != null)
+                        {
+                            step.path.profile.calculateProfile(localization.currentPosition, dest);
+                            time.reset();
+
+                        }
+
                         while (!navigationEngine.isTargetReached(dest) && !manager.opMode.isStopRequested()) {
-                            navigationEngine.navigateInALinearFashion(dest);
+
+                            if (step.path.profile != null)
+                            {
+                                navigationEngine.navigateInALinearFashion(dest, step.path.profile);
+                            }
+
+                            navigationEngine.navigateInALinearFashion(dest, null);
+
                             runContinuousActions();
                         }
                     }
@@ -110,6 +131,21 @@ public class Pipeline {
 
         public Builder addLinearPath(Position... positions) {
             steps.add(new PipelineStep(Path.linear(positions)));
+
+            return this;
+        }
+
+        public Builder addLinearPath(MotionProfile profile, Position... positions) {
+            steps.add(new PipelineStep(Path.linear(profile, positions)));
+
+            return this;
+        }
+
+        public Builder addLinearPath(MotionProfile profile, boolean continuous, Position... positions) {
+            steps.add(new PipelineStep(Path.linear(profile, positions)));
+
+            if (!continuous)
+                steps.add(new PipelineStep(PipelineStep.StepType.stop));
 
             return this;
         }

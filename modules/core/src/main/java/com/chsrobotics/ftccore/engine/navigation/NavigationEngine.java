@@ -1,15 +1,19 @@
 package com.chsrobotics.ftccore.engine.navigation;
 
 import com.chsrobotics.ftccore.engine.localization.LocalizationEngine;
+import com.chsrobotics.ftccore.engine.navigation.path.MotionProfile;
 import com.chsrobotics.ftccore.geometry.Position;
 import com.chsrobotics.ftccore.hardware.HardwareManager;
 import com.chsrobotics.ftccore.engine.navigation.control.*;
+import com.chsrobotics.ftccore.pipeline.Pipeline;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
 
+import java.nio.channels.Pipe;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public class NavigationEngine {
     private final HardwareManager hardware;
@@ -22,6 +26,7 @@ public class NavigationEngine {
     private double error;
     private double thetaError;
     private boolean isCounterClockwise;
+    private Position lastPos;
 
     public NavigationEngine(LocalizationEngine localization, HardwareManager hardware)
     {
@@ -29,6 +34,8 @@ public class NavigationEngine {
         this.localization = localization;
         this.linearController = hardware.linearCtrler;
         this.rotationController = hardware.rotCtrler;
+
+        lastPos = localization.getCurrentPosition();
     }
 
     public boolean isTargetReached(Position destination)
@@ -58,8 +65,23 @@ public class NavigationEngine {
         return (error < hardware.linearTolerance && Math.abs(thetaError) < hardware.rotTolerance);
     }
 
-    public void navigateInALinearFashion(Position destination)
+    public void navigateInALinearFashion(Position destination, MotionProfile profile)
     {
+
+        if (profile != null)
+        {
+            Position pos = localization.currentPosition;
+            double posError = Math.sqrt(Math.pow(destination.y - pos.y, 2) + Math.pow(destination.x - pos.x, 2));
+
+            if (posError > (profile.distance / 2))
+            {
+                error = profile.getOutput(Pipeline.time.time(TimeUnit.MILLISECONDS) / 1000d);
+            } else if (posError > (profile.distance - 100))
+                error = profile.distance - profile.getOutput(Pipeline.time.time(TimeUnit.MILLISECONDS) / 1000d);
+            else
+                error = posError;
+
+        }
 
         position = localization.getCurrentPosition();
 
