@@ -11,21 +11,21 @@ public class PipelineStep {
 
     public PipelineStep(Path path)
     {
-        type = StepType.navigation;
+        type = StepType.NAVIGATION;
         this.path = path;
         this.action = null;
     }
 
     public PipelineStep(Action action)
     {
-        type = StepType.action;
+        type = StepType.ACTION;
         this.action = action;
         this.path = null;
     }
 
     public PipelineStep(StepType type)
     {
-        if (type == StepType.stop) {
+        if (type == StepType.STOP) {
             this.path = null;
             this.action = null;
             this.type = type;
@@ -38,8 +38,8 @@ public class PipelineStep {
 
     public enum StepType
     {
-        navigation,
-        action,
-        stop
+        NAVIGATION,
+        ACTION,
+        STOP
     }
 }

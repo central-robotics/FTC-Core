@@ -8,11 +8,9 @@ import com.chsrobotics.ftccore.engine.navigation.path.MotionProfile;
 import com.chsrobotics.ftccore.engine.navigation.path.Path;
 import com.chsrobotics.ftccore.geometry.Position;
 import com.chsrobotics.ftccore.hardware.HardwareManager;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class Pipeline {
@@ -21,6 +19,7 @@ public class Pipeline {
     private ArrayList<PipelineStep> steps;
     private ArrayList<ContinuousAction> continuousActions;
     private final double conversion = Math.PI / 180;
+    public final LocalizationEngine localization;
 
     public static ElapsedTime time = new ElapsedTime();
 
@@ -28,6 +27,7 @@ public class Pipeline {
         this.manager = manager;
         this.steps = steps;
         this.continuousActions = continuousActions;
+        this.localization = new LocalizationEngine(manager);
 
         time.startTime();
     }
@@ -40,7 +40,6 @@ public class Pipeline {
 
     public void execute()
     {
-        LocalizationEngine localization = new LocalizationEngine(manager);
         NavigationEngine navigationEngine = new NavigationEngine(localization, manager);
 
         for (PipelineStep step : steps)
@@ -49,48 +48,40 @@ public class Pipeline {
             {
                 break;
             }
-            if (step.type == PipelineStep.StepType.navigation)
+            if (step.type == PipelineStep.StepType.NAVIGATION)
             {
                 assert step.path != null;
-                if (!step.path.isCurved) {
-                    for (Position dest : step.path.positions) {
-                        navigationEngine.linearController.resetSum();
-                        navigationEngine.rotationController.resetSum();
-                        if (manager.useDegrees)
-                            dest.t *= conversion;
-                        if (manager.opMode.isStopRequested())
-                        {
-                            break;
-                        }
-
-                        if (step.path.profile != null)
-                        {
-                            step.path.profile.calculateProfile(localization.currentPosition, dest);
-                            time.reset();
-
-                        }
-
-                        while (!navigationEngine.isTargetReached(dest) && !manager.opMode.isStopRequested()) {
-
-                            if (step.path.profile != null)
-                            {
-                                navigationEngine.navigateInALinearFashion(dest, step.path.profile);
-                            }
-
-                            navigationEngine.navigateInALinearFashion(dest, null);
-
-                            runContinuousActions();
-                        }
-                    }
-                } else
-                {
+                if (step.path.isCurved) {
                     navigationEngine.navigateInANonLinearFashion(step.path.positions);
+                    continue;
                 }
-            } else if (step.type == PipelineStep.StepType.action)
+                for (Position dest : step.path.positions) {
+                    navigationEngine.linearController.resetSum();
+                    navigationEngine.rotationController.resetSum();
+                    if (manager.useDegrees) {
+                        dest.t *= conversion;
+                    }
+                    if (manager.opMode.isStopRequested())
+                    {
+                        break;
+                    }
+
+                    if (step.path.profile != null)
+                    {
+                        step.path.profile.calculateProfile(localization.currentPosition, dest);
+                        time.reset();
+                    }
+
+                    while (!navigationEngine.isTargetReached(dest) && !manager.opMode.isStopRequested()) {
+                        navigationEngine.navigateInALinearFashion(dest, null);
+                        runContinuousActions();
+                    }
+                }
+            } else if (step.type == PipelineStep.StepType.ACTION)
             {
                 assert step.action != null;
                 step.action.execute();
-            } else if (step.type == PipelineStep.StepType.stop)
+            } else if (step.type == PipelineStep.StepType.STOP)
             {
                 for (DcMotorEx motor : manager.driveMotors)
                     motor.setPower(0);
@@ -124,7 +115,7 @@ public class Pipeline {
             steps.add(new PipelineStep(Path.linear(positions)));
 
             if (!continuous)
-                steps.add(new PipelineStep(PipelineStep.StepType.stop));
+                steps.add(new PipelineStep(PipelineStep.StepType.STOP));
 
             return this;
         }
@@ -145,7 +136,7 @@ public class Pipeline {
             steps.add(new PipelineStep(Path.linear(profile, positions)));
 
             if (!continuous)
-                steps.add(new PipelineStep(PipelineStep.StepType.stop));
+                steps.add(new PipelineStep(PipelineStep.StepType.STOP));
 
             return this;
         }
