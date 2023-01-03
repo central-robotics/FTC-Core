@@ -67,6 +67,8 @@ public class Pipeline {
                 for (Position dest : step.path.positions) {
                     navigationEngine.linearController.resetSum();
                     navigationEngine.rotationController.resetSum();
+                    if (step.path.profile != null && manager.profileCtrler != null)
+                        manager.profileCtrler.resetSum();
                     if (manager.useDegrees) {
                         dest.t *= conversion;
                     }

@@ -82,6 +82,10 @@ public class NavigationEngine {
 
         double orientation = Math.atan2(destination.y - position.y, destination.x - position.x) - Math.PI / 4 - position.t;
 
+
+        if (profile != null && hardware.profileCtrler != null)
+            magnitude = hardware.profileCtrler.getOutput(error, 0);
+
         magnitude = linearController.getOutput(error, 0);
 
         double negOutput = magnitude * Math.sin(orientation);
