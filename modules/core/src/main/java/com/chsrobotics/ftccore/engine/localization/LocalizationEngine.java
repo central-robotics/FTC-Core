@@ -59,8 +59,6 @@ public class LocalizationEngine {
         return currentPosition; //Temporarily returning only encoder based position.
     }
 
-
-
     private void initializeLocalization()
     {
         localizers = new ArrayList<>();

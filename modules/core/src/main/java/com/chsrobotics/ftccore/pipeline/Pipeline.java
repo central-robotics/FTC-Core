@@ -22,8 +22,15 @@ public class Pipeline {
     public final LocalizationEngine localization;
 
     public static ElapsedTime time = new ElapsedTime();
+    private static Pipeline INSTANCE;
+
+
+    public static Pipeline getInstance() {
+        return INSTANCE;
+    }
 
     private Pipeline(HardwareManager manager, ArrayList<PipelineStep> steps, ArrayList<ContinuousAction> continuousActions) {
+        INSTANCE = this;
         this.manager = manager;
         this.steps = steps;
         this.continuousActions = continuousActions;
@@ -32,7 +39,7 @@ public class Pipeline {
         time.startTime();
     }
 
-    private void runContinuousActions() {
+    public void runContinuousActions() {
         for (ContinuousAction action : continuousActions) {
             action.execute();
         }
@@ -73,7 +80,7 @@ public class Pipeline {
                     }
 
                     while (!navigationEngine.isTargetReached(dest) && !manager.opMode.isStopRequested()) {
-                        navigationEngine.navigateInALinearFashion(dest, null);
+                        navigationEngine.navigateInALinearFashion(dest, step.path.profile);
                         runContinuousActions();
                     }
                 }

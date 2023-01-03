@@ -65,13 +65,17 @@ public class OdometryLocalizer extends Localizer{
         int lon = hardware.accessoryOdometryPods[1].getCurrentPosition();
 
         double heading = hardware.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS).firstAngle - hardware.offset;
-        double d_heading = heading - lastHeading;
+
+        double d = Math.abs(heading - lastHeading) % (2 * Math.PI);
+        double r = d > Math.PI ? (2 * Math.PI) - d : d;
+
+        int sign = (heading - lastHeading >= 0 && heading - lastHeading <= Math.PI) || (heading - lastHeading <= -Math.PI && heading - lastHeading >= -2 * Math.PI) ? 1 : -1;
+        r *= sign;
 
         //Calculate displacement values in mm
         //Account for active rotation by subtracting the arc length of heading displacement
-        //TODO: Make distances from rotation origin configurable
-        double d_lat = ((lat - lastLat) * mmPerTick) - (hardware.latWheelOffset * d_heading);
-        double d_lon = ((lon - lastLon) * mmPerTick) - (hardware.lonWheelOffset * d_heading);
+        double d_lat = ((lat - lastLat) * mmPerTick) - (hardware.latWheelOffset * r);
+        double d_lon = ((lon - lastLon) * mmPerTick) - (hardware.lonWheelOffset * r);
 
         //Account for current orientation
         double dx = d_lat * Math.cos(heading) + d_lon * Math.sin(heading);
@@ -87,6 +91,9 @@ public class OdometryLocalizer extends Localizer{
         robotPosition.x = previousPosition.x - dx;
         robotPosition.y = previousPosition.y + dy;
         robotPosition.t = heading;
+
+        hardware.opMode.telemetry.addData("heading", heading);
+        hardware.opMode.telemetry.addData("d_heading", r);
 
         if (robotPosition.x == 0) robotPosition.x = 0.0000001;
 
