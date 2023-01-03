@@ -1,6 +1,8 @@
 package com.chsrobotics.ftccore.hardware;
 
 import com.chsrobotics.ftccore.engine.navigation.control.PID;
+import com.chsrobotics.ftccore.engine.navigation.path.PrecisionMode;
+import com.chsrobotics.ftccore.engine.navigation.path.Tolerances;
 import com.chsrobotics.ftccore.hardware.config.Config;
 import com.chsrobotics.ftccore.hardware.config.accessory.Accessory;
 import com.qualcomm.hardware.bosch.BNO055IMU;
@@ -73,12 +75,16 @@ public class HardwareManager {
     public double latWheelOffset;
     public double lonWheelOffset;
 
-    public double linearTolerance;
-    public double rotTolerance;
+    private Tolerances lowPrecisionTolerances;
+    private Tolerances mediumPrecisionTolerances;
+    private Tolerances highPrecisionTolerances;
+    public Tolerances tolerances; // Current tolerances
 
     public boolean useDegrees;
 
     /**
+        linearTolerance = config.linearTolerance;
+        rotTolerance = config.rotTolerance;
      * Creates a hardware management interface and initializes all the hardware as specified by the configuration.
      * @param config The robot configuration. This can be created through the ConfigBuilder class.
      * @param hardware The hardware map object used access hardware configuration to create hardware objects.
@@ -107,8 +113,11 @@ public class HardwareManager {
         latWheelOffset = config.latWheelOffset;
         lonWheelOffset = config.lonWheelOffset;
 
-        linearTolerance = config.linearTolerance;
-        rotTolerance = config.rotTolerance;
+        lowPrecisionTolerances = config.lowPrecisionTolerances;
+        mediumPrecisionTolerances = config.mediumPrecisionTolerances;
+        highPrecisionTolerances = config.highPrecisionTolerances;
+
+        tolerances = mediumPrecisionTolerances;
 
         useDegrees = config.useDegrees;
     }
@@ -283,4 +292,15 @@ public class HardwareManager {
     public DcMotorEx getLeftBackMotor() { return driveMotors[3]; }
     public DcMotorEx getLiftMotor() { return accessoryMotors[0]; }
     public WebcamName getWebcam() { return accessoryCameras[0]; }
+
+    public void setPrecisionMode(PrecisionMode mode) {
+        if (mode == PrecisionMode.HIGH) {
+            tolerances = highPrecisionTolerances;
+        } else if (mode == PrecisionMode.MEDIUM) {
+            tolerances = mediumPrecisionTolerances;
+        } else {
+            tolerances = lowPrecisionTolerances;
+        }
+    }
+
 }

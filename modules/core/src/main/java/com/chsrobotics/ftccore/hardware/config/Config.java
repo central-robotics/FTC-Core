@@ -1,5 +1,6 @@
 package com.chsrobotics.ftccore.hardware.config;
 
+import com.chsrobotics.ftccore.engine.navigation.path.Tolerances;
 import com.chsrobotics.ftccore.hardware.config.accessory.Accessory;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -29,9 +30,11 @@ public class Config {
     public double wheelDiameter;
     public double latWheelOffset;
     public double lonWheelOffset;
-    public double linearTolerance;
-    public double rotTolerance;
     public boolean useDegrees = false;
+
+    public Tolerances lowPrecisionTolerances;
+    public Tolerances mediumPrecisionTolerances;
+    public Tolerances highPrecisionTolerances;
 
     public static class Builder {
         private String[] driveMotors;
@@ -49,8 +52,6 @@ public class Config {
         private double wheelDiameter;
         private double latWheelOffset;
         private double lonWheelOffset;
-        private double linearTolerance = 15;
-        private double rotTolerance = 0.1;
 
         private boolean debugMode;
         private boolean useDegrees = false;
@@ -58,6 +59,10 @@ public class Config {
         private boolean reversed = false;
         private boolean useCV = false;
         public boolean thetaReversed = false;
+
+        private Tolerances lowPrecisionTolerances;
+        private Tolerances mediumPrecisionTolerances = new Tolerances(15, 0.1);
+        private Tolerances highPrecisionTolerances;
 
 
         /**
@@ -165,10 +170,20 @@ public class Config {
             return this;
         }
 
-        public Builder setNavigationTolerances(double linearTolerance, double rotTolerance)
+        public Builder setNavigationTolerances(Tolerances tolerances)
         {
-            this.linearTolerance = linearTolerance;
-            this.rotTolerance = rotTolerance;
+            this.mediumPrecisionTolerances = tolerances;
+            return this;
+        }
+
+        public Builder setHighPrecisionTolerances(Tolerances tolerances)
+        {
+            this.highPrecisionTolerances = tolerances;
+            return this;
+        }
+
+        public Builder setLowPrecisionTolerances(Tolerances tolerances) {
+            this.lowPrecisionTolerances = tolerances;
             return this;
         }
 
@@ -247,9 +262,10 @@ public class Config {
             config.wheelDiameter = wheelDiameter;
             config.latWheelOffset = latWheelOffset;
             config.lonWheelOffset = lonWheelOffset;
-            config.linearTolerance = linearTolerance;
-            config.rotTolerance = rotTolerance;
             config.useDegrees = useDegrees;
+            config.lowPrecisionTolerances = lowPrecisionTolerances;
+            config.mediumPrecisionTolerances = mediumPrecisionTolerances;
+            config.highPrecisionTolerances = highPrecisionTolerances;
 
             return config;
         }

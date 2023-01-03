@@ -2,10 +2,12 @@ package com.chsrobotics.ftccore.pipeline;
 
 import com.chsrobotics.ftccore.actions.Action;
 import com.chsrobotics.ftccore.actions.ContinuousAction;
+import com.chsrobotics.ftccore.actions.SetPrecisionAction;
 import com.chsrobotics.ftccore.engine.localization.LocalizationEngine;
 import com.chsrobotics.ftccore.engine.navigation.NavigationEngine;
 import com.chsrobotics.ftccore.engine.navigation.path.MotionProfile;
 import com.chsrobotics.ftccore.engine.navigation.path.Path;
+import com.chsrobotics.ftccore.engine.navigation.path.PrecisionMode;
 import com.chsrobotics.ftccore.geometry.Position;
 import com.chsrobotics.ftccore.hardware.HardwareManager;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -147,6 +149,40 @@ public class Pipeline {
 
             return this;
         }
+        public Builder addLinearPath(PrecisionMode precisionMode, Position... positions) {
+            steps.add(new PipelineStep(new SetPrecisionAction(manager, precisionMode)));
+            steps.add(new PipelineStep(Path.linear(positions)));
+            steps.add(new PipelineStep(new SetPrecisionAction(manager, PrecisionMode.MEDIUM)));
+            return this;
+        }
+        public Builder addLinearPath(PrecisionMode precisionMode, boolean continuous, Position... positions) {
+            steps.add(new PipelineStep(new SetPrecisionAction(manager, precisionMode)));
+            steps.add(new PipelineStep(Path.linear(positions)));
+            steps.add(new PipelineStep(new SetPrecisionAction(manager, PrecisionMode.MEDIUM)));
+
+            if (!continuous)
+                steps.add(new PipelineStep(PipelineStep.StepType.STOP));
+
+            return this;
+        }
+
+        public Builder addLinearPath(PrecisionMode precisionMode, MotionProfile profile, Position... positions) {
+            steps.add(new PipelineStep(new SetPrecisionAction(manager, precisionMode)));
+            steps.add(new PipelineStep(Path.linear(profile, positions)));
+            steps.add(new PipelineStep(new SetPrecisionAction(manager, PrecisionMode.MEDIUM)));
+            return this;
+        }
+
+        public Builder addLinearPath(PrecisionMode precisionMode, MotionProfile profile, boolean continuous, Position... positions) {
+            steps.add(new PipelineStep(new SetPrecisionAction(manager, precisionMode)));
+            steps.add(new PipelineStep(Path.linear(profile, positions)));
+            steps.add(new PipelineStep(new SetPrecisionAction(manager, PrecisionMode.MEDIUM)));
+
+            if (!continuous)
+                steps.add(new PipelineStep(PipelineStep.StepType.STOP));
+
+            return this;
+        }
 
         public Builder addContinuousAction(ContinuousAction continuousAction)
         {
@@ -158,5 +194,6 @@ public class Pipeline {
             return new Pipeline(manager, steps, continuousActions);
         }
     }
+
 
 }

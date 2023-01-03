@@ -6,12 +6,7 @@ import com.chsrobotics.ftccore.geometry.Position;
 import com.chsrobotics.ftccore.hardware.HardwareManager;
 import com.chsrobotics.ftccore.engine.navigation.control.*;
 import com.chsrobotics.ftccore.pipeline.Pipeline;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
-
-import java.nio.channels.Pipe;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -62,7 +57,7 @@ public class NavigationEngine {
         if (thetaError < 0 && (thetaError > -Math.PI))
             isCounterClockwise = false;
 
-        return (error < hardware.linearTolerance && Math.abs(thetaError) < hardware.rotTolerance);
+        return (error < hardware.tolerances.linear && Math.abs(thetaError) < hardware.tolerances.rotational);
     }
 
     public void navigateInALinearFashion(Position destination, MotionProfile profile)
@@ -96,7 +91,7 @@ public class NavigationEngine {
             posOutput = negOutput;
         }
 
-        double thetaOutput = Math.abs(thetaError) >= 0.05 ? rotationController.getOutput(Math.abs(thetaError), 0) : 0;
+        double thetaOutput = Math.abs(thetaError) >= hardware.tolerances.rotational ? rotationController.getOutput(Math.abs(thetaError), 0) : 0;
 
         if (hardware.debugMode) {
             hardware.opMode.telemetry.addData("X", position.x);
