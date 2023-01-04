@@ -5,12 +5,14 @@ import com.chsrobotics.ftccore.actions.ContinuousAction;
 import com.chsrobotics.ftccore.actions.SetPrecisionAction;
 import com.chsrobotics.ftccore.engine.localization.LocalizationEngine;
 import com.chsrobotics.ftccore.engine.navigation.NavigationEngine;
+import com.chsrobotics.ftccore.engine.navigation.control.PID;
 import com.chsrobotics.ftccore.engine.navigation.path.MotionProfile;
 import com.chsrobotics.ftccore.engine.navigation.path.Path;
 import com.chsrobotics.ftccore.engine.navigation.path.PrecisionMode;
 import com.chsrobotics.ftccore.geometry.Position;
 import com.chsrobotics.ftccore.hardware.HardwareManager;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.PIDCoefficients;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import java.util.ArrayList;
@@ -53,6 +55,11 @@ public class Pipeline {
 
         for (PipelineStep step : steps)
         {
+            if (step.type == PipelineStep.StepType.CHANGE_PID)
+            {
+                manager.linearCtrler = new PID(step.coeffs);
+                continue;
+            }
             if (manager.opMode.isStopRequested())
             {
                 break;
@@ -119,6 +126,12 @@ public class Pipeline {
 
         public Builder addCurvedPath(Position... positions) {
             steps.add(new PipelineStep(Path.curved(positions)));
+            return this;
+        }
+
+        public Builder changePID(PIDCoefficients coeffs)
+        {
+            steps.add(new PipelineStep(coeffs));
             return this;
         }
 
