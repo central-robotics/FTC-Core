@@ -36,7 +36,15 @@ public class NavigationEngine {
     public boolean isTargetReached(Position destination)
     {
         error = Math.sqrt(Math.pow(destination.y - position.y, 2) + Math.pow(destination.x - position.x, 2));
-        thetaError = destination.t - position.t;
+
+        if (destination.time > 0.0 && Pipeline.time.time(TimeUnit.MILLISECONDS) / 1000d > destination.time)
+        {
+            thetaError = destination.t - position.t;
+        } else if (destination.time == 0.0)
+            thetaError = destination.t - position.t;
+        else
+            thetaError = 0;
+
         isCounterClockwise = false;
 
         if (Math.abs(destination.t - (position.t - (2 * Math.PI))) < Math.abs(thetaError))
