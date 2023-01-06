@@ -103,9 +103,18 @@ public class Pipeline {
         private final HardwareManager manager;
         private final ArrayList<PipelineStep> steps;
         private final ArrayList<ContinuousAction> continuousActions;
+        private final boolean flipSides;
 
         public Builder(HardwareManager manager) {
             this.manager = manager;
+            this.flipSides = false;
+            steps = new ArrayList<>();
+            continuousActions = new ArrayList<>();
+        }
+
+        public Builder(HardwareManager manager, boolean flipSides) {
+            this.manager = manager;
+            this.flipSides = flipSides;
             steps = new ArrayList<>();
             continuousActions = new ArrayList<>();
         }
@@ -116,11 +125,13 @@ public class Pipeline {
         }
 
         public Builder addCurvedPath(Position... positions) {
+            flipPositions(positions);
             steps.add(new PipelineStep(Path.curved(positions)));
             return this;
         }
 
         public Builder addLinearPath(boolean continuous, Position... positions) {
+            flipPositions(positions);
             steps.add(new PipelineStep(Path.linear(positions)));
 
             if (!continuous)
@@ -130,18 +141,21 @@ public class Pipeline {
         }
 
         public Builder addLinearPath(Position... positions) {
+            flipPositions(positions);
             steps.add(new PipelineStep(Path.linear(positions)));
 
             return this;
         }
 
         public Builder addLinearPath(MotionProfile profile, Position... positions) {
+            flipPositions(positions);
             steps.add(new PipelineStep(Path.linear(profile, positions)));
 
             return this;
         }
 
         public Builder addLinearPath(MotionProfile profile, boolean continuous, Position... positions) {
+            flipPositions(positions);
             steps.add(new PipelineStep(Path.linear(profile, positions)));
 
             if (!continuous)
@@ -150,12 +164,14 @@ public class Pipeline {
             return this;
         }
         public Builder addLinearPath(PrecisionMode precisionMode, Position... positions) {
+            flipPositions(positions);
             steps.add(new PipelineStep(new SetPrecisionAction(manager, precisionMode)));
             steps.add(new PipelineStep(Path.linear(positions)));
             steps.add(new PipelineStep(new SetPrecisionAction(manager, PrecisionMode.MEDIUM)));
             return this;
         }
         public Builder addLinearPath(PrecisionMode precisionMode, boolean continuous, Position... positions) {
+            flipPositions(positions);
             steps.add(new PipelineStep(new SetPrecisionAction(manager, precisionMode)));
             steps.add(new PipelineStep(Path.linear(positions)));
             steps.add(new PipelineStep(new SetPrecisionAction(manager, PrecisionMode.MEDIUM)));
@@ -167,6 +183,7 @@ public class Pipeline {
         }
 
         public Builder addLinearPath(PrecisionMode precisionMode, MotionProfile profile, Position... positions) {
+            flipPositions(positions);
             steps.add(new PipelineStep(new SetPrecisionAction(manager, precisionMode)));
             steps.add(new PipelineStep(Path.linear(profile, positions)));
             steps.add(new PipelineStep(new SetPrecisionAction(manager, PrecisionMode.MEDIUM)));
@@ -174,6 +191,7 @@ public class Pipeline {
         }
 
         public Builder addLinearPath(PrecisionMode precisionMode, MotionProfile profile, boolean continuous, Position... positions) {
+            flipPositions(positions);
             steps.add(new PipelineStep(new SetPrecisionAction(manager, precisionMode)));
             steps.add(new PipelineStep(Path.linear(profile, positions)));
             steps.add(new PipelineStep(new SetPrecisionAction(manager, PrecisionMode.MEDIUM)));
@@ -192,6 +210,24 @@ public class Pipeline {
 
         public Pipeline build() {
             return new Pipeline(manager, steps, continuousActions);
+        }
+
+        private void flipPositions(Position[] positions) {
+            if (!flipSides) {
+                return;
+            }
+            for (Position p : positions) {
+                p.x *= -1;
+
+                double adjustedT = -p.t;
+                while (adjustedT >= 2 * Math.PI) {
+                    adjustedT -= 2 * Math.PI;
+                }
+                while (adjustedT < 0) {
+                    adjustedT += 2 * Math.PI;
+                }
+                p.t = adjustedT;
+            }
         }
     }
 

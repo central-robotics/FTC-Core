@@ -36,6 +36,7 @@ public class Config {
     public Tolerances mediumPrecisionTolerances;
     public Tolerances highPrecisionTolerances;
 
+
     public static class Builder {
         private String[] driveMotors;
         private String imu;
@@ -63,7 +64,6 @@ public class Config {
         private Tolerances lowPrecisionTolerances;
         private Tolerances mediumPrecisionTolerances = new Tolerances(15, 0.1);
         private Tolerances highPrecisionTolerances;
-
 
         /**
          Creates a new instance of the ConfigBuilder for setting up the robot hardware.
