@@ -15,6 +15,7 @@ public class Config {
     public ArrayList<Accessory> accessories;
     public PIDCoefficients linearCoeffs;
     public PIDCoefficients rotCoeffs;
+    public PIDCoefficients profileCoeffs;
     public LinearOpMode opMode;
     public BNO055IMU.Parameters params;
     public DcMotorSimple.Direction direction = DcMotorSimple.Direction.FORWARD;
@@ -44,6 +45,7 @@ public class Config {
         private ArrayList<Accessory> accessories;
         private PIDCoefficients linearCoeffs;
         private PIDCoefficients rotCoeffs;
+        private PIDCoefficients profileCoeffs;
         private LinearOpMode opMode;
         private double offset = 0;
         private double linearSpeed = 1, rotSpeed = 1;
@@ -87,6 +89,12 @@ public class Config {
                     m0, m1, m2, m3
             };
 
+            return this;
+        }
+
+        public Builder setMotionProfilePIDCoeffs(PIDCoefficients coeffs)
+        {
+            profileCoeffs = coeffs;
             return this;
         }
 
@@ -266,6 +274,7 @@ public class Config {
             config.lowPrecisionTolerances = lowPrecisionTolerances;
             config.mediumPrecisionTolerances = mediumPrecisionTolerances;
             config.highPrecisionTolerances = highPrecisionTolerances;
+            config.profileCoeffs = profileCoeffs;
 
             return config;
         }

@@ -16,6 +16,8 @@ import java.util.Vector;
 
 public class Drive {
     public final HardwareManager manager;
+    public static double linearFactor = 1;
+    public static double rotationFactor = 1;
     private long prevTime = System.currentTimeMillis();
     private final UserDriveLoop loop;
     private final Builder.ScaleMode mode;
@@ -66,6 +68,9 @@ public class Drive {
                     joystick_power = rawPower;
                     break;
             }
+
+            joystick_power *= linearFactor;
+            rot_power *= rotationFactor;
 
             gyro_angles = manager.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS);
             theta = gyro_angles.firstAngle - manager.IMUReset - manager.offset;

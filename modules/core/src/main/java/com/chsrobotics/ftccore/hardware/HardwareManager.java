@@ -58,6 +58,7 @@ public class HardwareManager {
      */
     public PID linearCtrler;
     public PID rotCtrler;
+    public PID profileCtrler;
 
     /**
      * The LinearOpMode
@@ -272,6 +273,9 @@ public class HardwareManager {
     {
         linearCtrler = new PID(config.linearCoeffs);
         rotCtrler = new PID(config.rotCoeffs);
+
+        if (config.profileCoeffs != null)
+            profileCtrler = new PID(config.profileCoeffs);
     }
 
     private void initializeLinearOpMode(Config config)
