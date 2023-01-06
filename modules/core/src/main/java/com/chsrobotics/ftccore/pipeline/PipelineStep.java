@@ -9,14 +9,17 @@ public class PipelineStep {
     public final StepType type;
     public final Path path;
     public final Action action;
-    public final PIDCoefficients coeffs;
+    public final PIDCoefficients linearCoeffs;
+    public final PIDCoefficients rotCoeffs;
+
 
     public PipelineStep(Path path)
     {
         type = StepType.NAVIGATION;
         this.path = path;
         this.action = null;
-        this.coeffs = null;
+        this.rotCoeffs = null;
+        this.linearCoeffs = null;
     }
 
     public PipelineStep(Action action)
@@ -24,13 +27,15 @@ public class PipelineStep {
         type = StepType.ACTION;
         this.action = action;
         this.path = null;
-        this.coeffs = null;
+        this.linearCoeffs = null;
+        this.rotCoeffs = null;
     }
 
-    public PipelineStep(PIDCoefficients coeffs)
+    public PipelineStep(PIDCoefficients linearCoeffs, PIDCoefficients rotCoeffs)
     {
         type = StepType.CHANGE_PID;
-        this.coeffs = coeffs;
+        this.linearCoeffs = linearCoeffs;
+        this.rotCoeffs = rotCoeffs;
         this.path = null;
         this.action = null;
     }
@@ -40,13 +45,15 @@ public class PipelineStep {
         if (type == StepType.STOP) {
             this.path = null;
             this.action = null;
-            this.coeffs = null;
+            this.linearCoeffs = null;
+            this.rotCoeffs = null;
             this.type = type;
         } else {
             this.path = null;
             this.action = null;
             this.type = null;
-            this.coeffs = null;
+            this.rotCoeffs = null;
+            this.linearCoeffs = null;
         }
     }
 

@@ -57,7 +57,10 @@ public class Pipeline {
         {
             if (step.type == PipelineStep.StepType.CHANGE_PID)
             {
-                manager.linearCtrler = new PID(step.coeffs);
+                manager.linearCtrler = new PID(step.linearCoeffs);
+
+                if (step.rotCoeffs != null)
+                    manager.rotCtrler = new PID(step.rotCoeffs);
                 continue;
             }
             if (manager.opMode.isStopRequested())
@@ -129,9 +132,15 @@ public class Pipeline {
             return this;
         }
 
-        public Builder changePID(PIDCoefficients coeffs)
+        public Builder changePID(PIDCoefficients linearCoeffs)
         {
-            steps.add(new PipelineStep(coeffs));
+            steps.add(new PipelineStep(linearCoeffs, null));
+            return this;
+        }
+
+        public Builder changePID(PIDCoefficients linearCoeffs, PIDCoefficients rotCoeffs)
+        {
+            steps.add(new PipelineStep(linearCoeffs, rotCoeffs));
             return this;
         }
 
