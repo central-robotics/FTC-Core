@@ -1,5 +1,6 @@
 package com.chsrobotics.ftccore.engine.navigation.control;
 
+import com.chsrobotics.ftccore.pipeline.Pipeline;
 import com.qualcomm.robotcore.hardware.PIDCoefficients;
 import com.chsrobotics.ftccore.geometry.Position;
 
@@ -9,6 +10,7 @@ public class PID {
     private final double kI;
     private final double kD;
     private double errorSum;
+    private double lastError;
 
     public PID(PIDCoefficients coeffs)
     {
@@ -18,8 +20,13 @@ public class PID {
     }
 
     public double getOutput(double error, double speed) {
-        errorSum += error;
-        return (kP * error) + (kI * errorSum) - (kD * speed);
+        errorSum += error * Pipeline.time.seconds();
+
+        double derivative = (error - lastError) / Pipeline.time.seconds();
+
+        lastError = error;
+
+        return (kP * error) + (kI * errorSum) + (kD * derivative);
     }
 
     public double getSlope(Position target, Position position)
@@ -29,5 +36,6 @@ public class PID {
 
     public void resetSum() {
         errorSum = 0;
+        lastError = 0;
     }
 }

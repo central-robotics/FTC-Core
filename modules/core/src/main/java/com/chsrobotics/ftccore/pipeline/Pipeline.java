@@ -87,10 +87,11 @@ public class Pipeline {
                         break;
                     }
 
+                    time.reset();
+
                     if (step.path.profile != null)
                     {
                         step.path.profile.calculateProfile(localization.currentPosition, dest);
-                        time.reset();
                     }
 
                     while (!navigationEngine.isTargetReached(dest) && !manager.opMode.isStopRequested()) {
