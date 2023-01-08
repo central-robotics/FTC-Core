@@ -21,6 +21,15 @@ public class PID {
         kD = coeffs.d;
     }
 
+    public PID(PIDCoefficients coeffs, double windupCap)
+    {
+        kP = coeffs.p;
+        kI = coeffs.i;
+        kD = coeffs.d;
+
+        this.windupCap = windupCap;
+    }
+
     public double getOutput(double error, double speed) {
         double currentTime = Pipeline.time.seconds();
 
