@@ -11,6 +11,8 @@ public class PID {
     private final double kD;
     private double errorSum;
     private double lastError;
+    private double lastTimestamp;
+    private double windupCap = 0;
 
     public PID(PIDCoefficients coeffs)
     {
@@ -20,9 +22,31 @@ public class PID {
     }
 
     public double getOutput(double error, double speed) {
-        errorSum += error * Pipeline.time.seconds();
+        double currentTime = Pipeline.time.seconds();
 
-        double derivative = (error - lastError) / Pipeline.time.seconds();
+        if (lastTimestamp == 0)
+            lastTimestamp = currentTime;
+
+        double period = currentTime - lastTimestamp;
+
+        lastTimestamp = currentTime;
+
+        double derivative = 0;
+
+        if (Math.abs(period) > 1E-6) {
+            derivative = (error - lastError) / period;
+        } else {
+            derivative = 0;
+        }
+
+        errorSum += error * period;
+
+        if (errorSum > windupCap) {
+            errorSum = windupCap;
+        }
+        if (errorSum < -windupCap) {
+            errorSum = -windupCap;
+        }
 
         lastError = error;
 
@@ -32,6 +56,11 @@ public class PID {
     public double getSlope(Position target, Position position)
     {
         return (target.y - position.y) / (target.x - position.x);
+    }
+
+    public void capWindup(double cap)
+    {
+        windupCap = cap;
     }
 
     public void resetSum() {
