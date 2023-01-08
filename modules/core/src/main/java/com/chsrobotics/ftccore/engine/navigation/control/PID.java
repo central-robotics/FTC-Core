@@ -31,7 +31,7 @@ public class PID {
     }
 
     public double getOutput(double error, double speed) {
-        double currentTime = Pipeline.time.seconds();
+        double currentTime= (double) System.nanoTime() / 1E9;
 
         if (lastTimestamp == 0)
             lastTimestamp = currentTime;
@@ -75,5 +75,6 @@ public class PID {
     public void resetSum() {
         errorSum = 0;
         lastError = 0;
+        lastTimestamp = 0;
     }
 }
