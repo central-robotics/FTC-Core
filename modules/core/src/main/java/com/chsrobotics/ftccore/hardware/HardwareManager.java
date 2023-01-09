@@ -97,7 +97,7 @@ public class HardwareManager {
         initializeDriveMotors(config);
         initializeIMU(config);
         initializeAccessories(config);
-        if (config.linearCoeffs != null && config.rotCoeffs != null)
+        if (config.linearParams != null && config.rotParams != null)
             initializePID(config);
 
         initializeLinearOpMode(config);
@@ -271,11 +271,11 @@ public class HardwareManager {
 
     private void initializePID(Config config)
     {
-        linearCtrler = new PID(config.linearCoeffs);
-        rotCtrler = new PID(config.rotCoeffs);
+        linearCtrler = new PID(config.linearParams);
+        rotCtrler = new PID(config.rotParams);
 
-        if (config.profileCoeffs != null)
-            profileCtrler = new PID(config.profileCoeffs);
+        if (config.profileParams != null)
+            profileCtrler = new PID(config.profileParams);
     }
 
     private void initializeLinearOpMode(Config config)

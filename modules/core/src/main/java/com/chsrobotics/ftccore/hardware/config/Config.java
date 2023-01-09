@@ -1,5 +1,6 @@
 package com.chsrobotics.ftccore.hardware.config;
 
+import com.chsrobotics.ftccore.engine.navigation.control.PIDParams;
 import com.chsrobotics.ftccore.engine.navigation.path.Tolerances;
 import com.chsrobotics.ftccore.hardware.config.accessory.Accessory;
 import com.qualcomm.hardware.bosch.BNO055IMU;
@@ -13,9 +14,9 @@ public class Config {
     public String[] driveMotors;
     public String imu;
     public ArrayList<Accessory> accessories;
-    public PIDCoefficients linearCoeffs;
-    public PIDCoefficients rotCoeffs;
-    public PIDCoefficients profileCoeffs;
+    public PIDParams linearParams;
+    public PIDParams rotParams;
+    public PIDParams profileParams;
     public LinearOpMode opMode;
     public BNO055IMU.Parameters params;
     public DcMotorSimple.Direction direction = DcMotorSimple.Direction.FORWARD;
@@ -43,6 +44,9 @@ public class Config {
         private String imu;
 
         private ArrayList<Accessory> accessories;
+        private PIDParams linearParams;
+        private PIDParams rotParams;
+        private PIDParams profileParams;
         private PIDCoefficients linearCoeffs;
         private PIDCoefficients rotCoeffs;
         private PIDCoefficients profileCoeffs;
@@ -92,9 +96,9 @@ public class Config {
             return this;
         }
 
-        public Builder setMotionProfilePIDCoeffs(PIDCoefficients coeffs)
+        public Builder setMotionProfilePIDCoeffs(PIDParams params)
         {
-            profileCoeffs = coeffs;
+            profileParams = params;
             return this;
         }
 
@@ -151,13 +155,13 @@ public class Config {
 
         /**
          * Sets the gain values for the main PID controller
-         * @param linearCoeffs coefficients for linear movements
-         * @param rotCoeffs coefficients for rotational movements
+         * @param linearParams coefficients for linear movements
+         * @param rotParams coefficients for rotational movements
          */
-        public Builder setPIDCoefficients(PIDCoefficients linearCoeffs, PIDCoefficients rotCoeffs)
+        public Builder setPIDCoefficients(PIDParams linearParams, PIDParams rotParams)
         {
-            this.linearCoeffs = linearCoeffs;
-            this.rotCoeffs = rotCoeffs;
+            this.linearParams = linearParams;
+            this.rotParams = rotParams;
 
             return this;
         }
@@ -255,8 +259,8 @@ public class Config {
             config.driveMotors = driveMotors;
             config.imu = imu;
             config.accessories = accessories;
-            config.linearCoeffs = linearCoeffs;
-            config.rotCoeffs = rotCoeffs;
+            config.linearParams = linearParams;
+            config.rotParams = rotParams;
             config.opMode = opMode;
             config.debugMode = debugMode;
             config.linearSpeed = linearSpeed;
@@ -274,7 +278,7 @@ public class Config {
             config.lowPrecisionTolerances = lowPrecisionTolerances;
             config.mediumPrecisionTolerances = mediumPrecisionTolerances;
             config.highPrecisionTolerances = highPrecisionTolerances;
-            config.profileCoeffs = profileCoeffs;
+            config.profileParams = profileParams;
 
             return config;
         }

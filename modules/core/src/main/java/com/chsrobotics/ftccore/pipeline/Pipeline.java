@@ -6,6 +6,7 @@ import com.chsrobotics.ftccore.actions.SetPrecisionAction;
 import com.chsrobotics.ftccore.engine.localization.LocalizationEngine;
 import com.chsrobotics.ftccore.engine.navigation.NavigationEngine;
 import com.chsrobotics.ftccore.engine.navigation.control.PID;
+import com.chsrobotics.ftccore.engine.navigation.control.PIDParams;
 import com.chsrobotics.ftccore.engine.navigation.path.MotionProfile;
 import com.chsrobotics.ftccore.engine.navigation.path.Path;
 import com.chsrobotics.ftccore.engine.navigation.path.PrecisionMode;
@@ -87,10 +88,11 @@ public class Pipeline {
                         break;
                     }
 
+                    time.reset();
+
                     if (step.path.profile != null)
                     {
                         step.path.profile.calculateProfile(localization.currentPosition, dest);
-                        time.reset();
                     }
 
                     while (!navigationEngine.isTargetReached(dest) && !manager.opMode.isStopRequested()) {
@@ -142,13 +144,13 @@ public class Pipeline {
             return this;
         }
 
-        public Builder changePID(PIDCoefficients linearCoeffs)
+        public Builder changePID(PIDParams linearCoeffs)
         {
             steps.add(new PipelineStep(linearCoeffs, null));
             return this;
         }
 
-        public Builder changePID(PIDCoefficients linearCoeffs, PIDCoefficients rotCoeffs)
+        public Builder changePID(PIDParams linearCoeffs, PIDParams rotCoeffs)
         {
             steps.add(new PipelineStep(linearCoeffs, rotCoeffs));
             return this;
