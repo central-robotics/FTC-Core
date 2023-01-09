@@ -14,20 +14,12 @@ public class PID {
     private double lastTimestamp;
     private double windupCap = 0;
 
-    public PID(PIDCoefficients coeffs)
+    public PID(PIDParams params)
     {
-        kP = coeffs.p;
-        kI = coeffs.i;
-        kD = coeffs.d;
-    }
-
-    public PID(PIDCoefficients coeffs, double windupCap)
-    {
-        kP = coeffs.p;
-        kI = coeffs.i;
-        kD = coeffs.d;
-
-        this.windupCap = windupCap;
+        kP = params.coefficients.p;
+        kI = params.coefficients.i;
+        kD = params.coefficients.d;
+        windupCap = params.integralCap;
     }
 
     public double getOutput(double error, double speed) {

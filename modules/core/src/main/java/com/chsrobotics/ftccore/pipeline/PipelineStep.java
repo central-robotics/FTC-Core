@@ -1,6 +1,7 @@
 package com.chsrobotics.ftccore.pipeline;
 
 import com.chsrobotics.ftccore.actions.Action;
+import com.chsrobotics.ftccore.engine.navigation.control.PIDParams;
 import com.chsrobotics.ftccore.engine.navigation.path.Path;
 import com.qualcomm.robotcore.hardware.PIDCoefficients;
 
@@ -9,8 +10,8 @@ public class PipelineStep {
     public final StepType type;
     public final Path path;
     public final Action action;
-    public final PIDCoefficients linearCoeffs;
-    public final PIDCoefficients rotCoeffs;
+    public final PIDParams linearCoeffs;
+    public final PIDParams rotCoeffs;
 
 
     public PipelineStep(Path path)
@@ -31,7 +32,7 @@ public class PipelineStep {
         this.rotCoeffs = null;
     }
 
-    public PipelineStep(PIDCoefficients linearCoeffs, PIDCoefficients rotCoeffs)
+    public PipelineStep(PIDParams linearCoeffs, PIDParams rotCoeffs)
     {
         type = StepType.CHANGE_PID;
         this.linearCoeffs = linearCoeffs;
