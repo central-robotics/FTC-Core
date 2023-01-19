@@ -26,6 +26,8 @@ public class LocalizationEngine {
     inputs of the different localizers using a Kalman filter into a more accurate output.
     */
 
+    public static Position position;
+
     public Position currentPosition = new Position(0, 0, 0);
     public Position lastPosition = new Position(0, 0, 0);
 
@@ -56,6 +58,7 @@ public class LocalizationEngine {
 
         lastPosition = currentPosition;
         currentPosition = positions.get(0);
+        position = currentPosition;
         return currentPosition; //Temporarily returning only encoder based position.
     }
 

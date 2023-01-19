@@ -29,7 +29,6 @@ public class CVUtility {
             camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
                 @Override
                 public void onOpened() {
-                    initialized = true;
                     startStreaming();
                 }
 
@@ -46,6 +45,7 @@ public class CVUtility {
     public void startStreaming()
     {
         camera.startStreaming(1280, 720, OpenCvCameraRotation.UPRIGHT);
+        initialized = true;
     }
 
     public Mat grabFrame()
@@ -73,6 +73,7 @@ public class CVUtility {
         public Mat processFrame(Mat input) {
             if (latestFrame == null) {
                 telem.addLine("Webcam ready");
+                initialized = true;
                 telem.update();
             }
             latestFrame = input;

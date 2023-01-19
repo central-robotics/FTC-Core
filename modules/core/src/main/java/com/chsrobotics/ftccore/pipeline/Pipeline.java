@@ -21,7 +21,7 @@ import java.util.ArrayList;
 public class Pipeline {
 
     private HardwareManager manager;
-    private ArrayList<PipelineStep> steps;
+    public ArrayList<PipelineStep> steps;
     private ArrayList<ContinuousAction> continuousActions;
     private final double conversion = Math.PI / 180;
     public final LocalizationEngine localization;

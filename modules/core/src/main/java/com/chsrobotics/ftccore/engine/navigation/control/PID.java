@@ -40,7 +40,7 @@ public class PID {
             derivative = 0;
         }
 
-        errorSum += error * period;
+        errorSum += error;
 
         if (errorSum > windupCap) {
             errorSum = windupCap;
