@@ -226,15 +226,10 @@ public class Config {
             return this;
         }
 
-        /**
-         * Tunes tele-op power multipliers.
-         * @param linearSpeed How fast the robot will move on the X, Y axis (0-1)
-         * @param rotSpeed How fast the robot will move rotationally (0-1)
-         */
-        public Builder setTeleopValues(double linearSpeed, double rotSpeed)
+        public Builder setTeleopValues(double maxLinearVelocity, double maxRotVelocity)
         {
-            this.linearSpeed = linearSpeed;
-            this.rotSpeed = rotSpeed;
+            this.linearSpeed = maxLinearVelocity;
+            this.rotSpeed = maxRotVelocity;
             return this;
         }
 

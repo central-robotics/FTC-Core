@@ -2,6 +2,8 @@ package com.chsrobotics.ftccore.engine.navigation;
 
 import com.chsrobotics.ftccore.engine.localization.LocalizationEngine;
 import com.chsrobotics.ftccore.engine.navigation.path.MotionProfile;
+import com.chsrobotics.ftccore.engine.navigation.path.TrapezoidalMotionProfile;
+import com.chsrobotics.ftccore.engine.navigation.path.TrapezoidalMotionProfileWithRot;
 import com.chsrobotics.ftccore.geometry.Position;
 import com.chsrobotics.ftccore.hardware.HardwareManager;
 import com.chsrobotics.ftccore.engine.navigation.control.*;
@@ -71,7 +73,7 @@ public class NavigationEngine {
     public void navigateInALinearFashion(Position destination, MotionProfile profile)
     {
 
-        if (profile != null)
+        if (profile != null && profile.getClass() == TrapezoidalMotionProfile.class)
         {
             Position pos = localization.currentPosition;
             double posError = Math.sqrt(Math.pow(destination.y - pos.y, 2) + Math.pow(destination.x - pos.x, 2));
@@ -84,6 +86,11 @@ public class NavigationEngine {
             else
                 error = posError;
 
+        } else if (profile != null && profile.getClass() == TrapezoidalMotionProfileWithRot.class)
+        {
+            TrapezoidalMotionProfileWithRot profileWithRot = (TrapezoidalMotionProfileWithRot) profile;
+
+            
         }
 
         position = localization.getCurrentPosition();

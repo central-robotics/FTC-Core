@@ -16,8 +16,8 @@ import java.util.Vector;
 
 public class Drive {
     public final HardwareManager manager;
-    public static double linearFactor = 1;
-    public static double rotationFactor = 1;
+    public static double linearMax = 1;
+    public static double rotationMax = 1;
     private long prevTime = System.currentTimeMillis();
     private final UserDriveLoop loop;
     private final Builder.ScaleMode mode;
@@ -69,9 +69,6 @@ public class Drive {
                     break;
             }
 
-            joystick_power *= linearFactor;
-            rot_power *= rotationFactor;
-
             gyro_angles = manager.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS);
             theta = gyro_angles.firstAngle - manager.IMUReset - manager.offset;
 
@@ -93,10 +90,10 @@ public class Drive {
         manager.opMode.telemetry.addData("rf", neginput - rotinput);
         manager.opMode.telemetry.addData("lb", -neginput - rotinput);
         manager.opMode.telemetry.addData("rb", posinput - rotinput);
-        manager.getLeftFrontMotor().setPower((manager.linearSpeed * -posinput) - (manager.rotSpeed * rotinput));
-        manager.getRightFrontMotor().setPower((manager.linearSpeed * neginput) - (manager.rotSpeed * rotinput));
-        manager.getLeftBackMotor().setPower((manager.linearSpeed * -neginput) - (manager.rotSpeed * rotinput));
-        manager.getRightBackMotor().setPower((manager.linearSpeed * posinput) - (manager.rotSpeed * rotinput));
+        manager.getLeftFrontMotor().setPower((manager.linearMax * -posinput) - (manager.rotMax * rotinput));
+        manager.getRightFrontMotor().setPower((manager.linearMax * neginput) - (manager.rotMax * rotinput));
+        manager.getLeftBackMotor().setPower((manager.linearMax * -neginput) - (manager.rotMax * rotinput));
+        manager.getRightBackMotor().setPower((manager.linearMax * posinput) - (manager.rotMax * rotinput));
     }
 
     public void runDriveLoop() {

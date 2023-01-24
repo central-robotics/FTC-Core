@@ -65,7 +65,7 @@ public class HardwareManager {
      */
     public LinearOpMode opMode;
 
-    public double linearSpeed = 1, rotSpeed = 1;
+    public double linearMax = 1000, rotMax = 1000;
     public double IMUReset = 0;
 
     public boolean imuLocalEnabled = true;
@@ -105,8 +105,8 @@ public class HardwareManager {
         if (config.useCV)
             this.useCV = true;
 
-        linearSpeed = config.linearSpeed;
-        rotSpeed = config.rotSpeed;
+        linearMax = config.linearSpeed;
+        rotMax = config.rotSpeed;
         thetaReversed = config.thetaReversed;
 
         encoderRes = config.encoderRes;
