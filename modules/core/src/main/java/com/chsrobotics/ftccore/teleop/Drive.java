@@ -90,10 +90,10 @@ public class Drive {
         manager.opMode.telemetry.addData("rf", neginput - rotinput);
         manager.opMode.telemetry.addData("lb", -neginput - rotinput);
         manager.opMode.telemetry.addData("rb", posinput - rotinput);
-        manager.getLeftFrontMotor().setPower((manager.linearMax * -posinput) - (manager.rotMax * rotinput));
-        manager.getRightFrontMotor().setPower((manager.linearMax * neginput) - (manager.rotMax * rotinput));
-        manager.getLeftBackMotor().setPower((manager.linearMax * -neginput) - (manager.rotMax * rotinput));
-        manager.getRightBackMotor().setPower((manager.linearMax * posinput) - (manager.rotMax * rotinput));
+        manager.getLeftFrontMotor().setVelocity((manager.linearMax * -posinput) - (manager.rotMax * rotinput));
+        manager.getRightFrontMotor().setVelocity((manager.linearMax * neginput) - (manager.rotMax * rotinput));
+        manager.getLeftBackMotor().setVelocity((manager.linearMax * -neginput) - (manager.rotMax * rotinput));
+        manager.getRightBackMotor().setVelocity((manager.linearMax * posinput) - (manager.rotMax * rotinput));
     }
 
     public void runDriveLoop() {
