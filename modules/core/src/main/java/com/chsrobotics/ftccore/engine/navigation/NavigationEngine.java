@@ -116,6 +116,7 @@ public class NavigationEngine {
             hardware.opMode.telemetry.addData("X", position.x);
             hardware.opMode.telemetry.addData("Y", position.y);
             hardware.opMode.telemetry.addData("T", position.t);
+            hardware.opMode.telemetry.addData("errorSum", linearController.errorSum);
             hardware.opMode.telemetry.addData("error", error);
 			hardware.opMode.telemetry.addData("direction", orientation);
             hardware.opMode.telemetry.update();

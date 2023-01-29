@@ -5,6 +5,7 @@ public class Position {
     public double y;
     public double t;
     public double time = 0.0;
+    public double maxTime = 0.0;
 
     public Position() {
 
@@ -21,6 +22,15 @@ public class Position {
     {
         this.x = x;
         this.y = y;
+    }
+
+    public Position(double x, double y, double t, double secondsBeforeRotation, double maxTimeSeconds)
+    {
+        this.x = x;
+        this.y = y;
+        this.t = t;
+        this.time = secondsBeforeRotation;
+        this.maxTime = maxTimeSeconds;
     }
 
     public Position(double x, double y, double t, double secondsBeforeRotation)

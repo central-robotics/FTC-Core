@@ -50,14 +50,14 @@ public class LocalizationEngine {
         //Kalman filter
         List<Position> positions = new ArrayList<>();
 
-        for (Localizer localizer : localizers) {
-            positions.add(localizer.getRobotPosition(lastPosition));
-        }
+//        for (Localizer localizer : localizers) {
+//            positions.add(localizer.getRobotPosition(lastPosition));
+//        }
 
         localizers.get(0).updateRobotPosition(positions.get(0));
 
         lastPosition = currentPosition;
-        currentPosition = positions.get(0);
+        currentPosition = localizers.get(0).getRobotPosition(lastPosition);
         position = currentPosition;
         return currentPosition; //Temporarily returning only encoder based position.
     }

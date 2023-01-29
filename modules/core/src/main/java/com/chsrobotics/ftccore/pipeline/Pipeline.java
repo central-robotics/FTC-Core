@@ -71,6 +71,8 @@ public class Pipeline {
             if (step.type == PipelineStep.StepType.NAVIGATION)
             {
                 assert step.path != null;
+
+
                 if (step.path.isCurved) {
                     navigationEngine.navigateInANonLinearFashion(step.path.positions);
                     continue;
@@ -96,6 +98,9 @@ public class Pipeline {
                     }
 
                     while (!navigationEngine.isTargetReached(dest) && !manager.opMode.isStopRequested()) {
+
+                        if (time.seconds() > dest.maxTime)
+                            break;
                         navigationEngine.navigateInALinearFashion(dest, step.path.profile);
                         runContinuousActions();
                     }

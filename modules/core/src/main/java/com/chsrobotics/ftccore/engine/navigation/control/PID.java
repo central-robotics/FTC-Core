@@ -9,7 +9,7 @@ public class PID {
     private final double kP;
     private final double kI;
     private final double kD;
-    private double errorSum;
+    public double errorSum;
     private double lastError;
     private double lastTimestamp;
     private double windupCap = 0;
