@@ -3,6 +3,7 @@ package com.chsrobotics.ftccore.actions;
 import com.chsrobotics.ftccore.engine.navigation.path.PrecisionMode;
 import com.chsrobotics.ftccore.hardware.HardwareManager;
 
+@Deprecated
 public class SetPrecisionAction extends Action {
 
     private HardwareManager hardware;
