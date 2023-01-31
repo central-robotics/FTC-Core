@@ -52,7 +52,7 @@ public class LocalizationEngine {
 
 //        for (Localizer localizer : localizers) {
 //            positions.add(localizer.getRobotPosition(lastPosition));
-//        }
+//        } STUTTERING ISSUE
 
         localizers.get(0).updateRobotPosition(positions.get(0));
 
