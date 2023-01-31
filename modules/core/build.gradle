@@ -41,7 +41,7 @@ android {
     }
 }
 
-publishing {
+publish {
     repositories {
         maven {
             name = "GitHubPackages"
