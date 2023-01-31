@@ -1,7 +1,7 @@
 
 ![enter image description here](https://i.imgur.com/NFUtYb1.png)
 
-Designed by Daniel Huinda, Garrison Taylor, and Zack Murray.
+Designed by Daniel Huinda, Garrison Taylor, and Zack Murry.
 Central High School Robotics in Springfield, Missouri
 
 [Click Here for Information About Using FTC Core!](https://centralrobotics.gitbook.io/ftc-core/)
