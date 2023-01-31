@@ -18,6 +18,7 @@ public class Drive {
     public final HardwareManager manager;
     public static double linearMax = 1;
     public static double rotationMax = 1;
+    public boolean overrideDriveControl = false;
     private long prevTime = System.currentTimeMillis();
     private final UserDriveLoop loop;
     private final Builder.ScaleMode mode;
@@ -27,6 +28,7 @@ public class Drive {
         this.mode = mode;
         this.manager = manager;
         this.loop = loop;
+        loop.drive = this;
     }
 
     private void driveLoop()
@@ -80,7 +82,8 @@ public class Drive {
             positive_power = (orientation != 0) ? (joystick_power * Math.cos(orientation)) :
                     negative_power;
 
-            move(positive_power, negative_power, rot_power);
+            if (!overrideDriveControl)
+                move(positive_power, negative_power, rot_power);
         }
     }
 

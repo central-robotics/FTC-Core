@@ -7,6 +7,8 @@ public abstract class UserDriveLoop {
 
     protected HardwareManager hardware;
     protected OpMode opmode;
+    public Drive drive;
+
     public UserDriveLoop(HardwareManager manager, OpMode mode)
     {
         opmode = mode;
