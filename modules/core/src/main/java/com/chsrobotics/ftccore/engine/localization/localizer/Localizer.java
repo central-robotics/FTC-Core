@@ -22,8 +22,8 @@ public abstract class Localizer {
     {
         double systemTime = System.currentTimeMillis();
 
-        currentPosition = initialState;
-        lastPosition = initialState;
+        currentPosition = new Position(0, 0 ,0);
+        lastPosition = new Position(0, 0 ,0);
 
         currentTime = systemTime;
         lastTime = systemTime;

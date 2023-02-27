@@ -54,8 +54,6 @@ public class LocalizationEngine {
 //            positions.add(localizer.getRobotPosition(lastPosition));
 //        } STUTTERING ISSUE
 
-        localizers.get(0).updateRobotPosition(positions.get(0));
-
         lastPosition = currentPosition;
         currentPosition = localizers.get(0).getRobotPosition(lastPosition);
         position = currentPosition;

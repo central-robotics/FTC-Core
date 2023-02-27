@@ -89,8 +89,6 @@ public class NavigationEngine {
         } else if (profile != null && profile.getClass() == TrapezoidalMotionProfileWithRot.class)
         {
             TrapezoidalMotionProfileWithRot profileWithRot = (TrapezoidalMotionProfileWithRot) profile;
-
-            
         }
 
         position = localization.getCurrentPosition();

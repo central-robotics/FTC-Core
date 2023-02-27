@@ -99,8 +99,8 @@ public class Pipeline {
 
                     while (!navigationEngine.isTargetReached(dest) && !manager.opMode.isStopRequested()) {
 
-                        if (time.seconds() > dest.maxTime)
-                            break;
+//                        if (time.seconds() > dest.maxTime && dest.maxTime > 0)
+//                            break;
                         navigationEngine.navigateInALinearFashion(dest, step.path.profile);
                         runContinuousActions();
                     }
