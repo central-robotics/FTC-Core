@@ -22,7 +22,7 @@ import java.util.concurrent.TimeUnit;
 public class Drive {
     public final HardwareManager manager;
     public static double linearMax = 1;
-    public static double rotationMax = 1;
+    public static double rotMax = 1;
     public boolean overrideDriveControl = false;
     private boolean isCounterClockwise = false;
     private boolean correctPID = false;
@@ -37,6 +37,8 @@ public class Drive {
         this.correctPIDCoeffs = correctPID;
         this.mode = mode;
         this.manager = manager;
+        linearMax = manager.linearMax;
+        rotMax = manager.rotMax;
         this.loop = loop;
         loop.drive = this;
     }
@@ -101,10 +103,10 @@ public class Drive {
 
     public void move(double posinput, double neginput, double rotinput, boolean usePID)
     {
-        manager.getLeftFrontMotor().setVelocity((manager.linearMax * -posinput) - (manager.rotMax * rotinput));
-        manager.getRightFrontMotor().setVelocity((manager.linearMax * neginput) - (manager.rotMax * rotinput));
-        manager.getLeftBackMotor().setVelocity((manager.linearMax * -neginput) - (manager.rotMax * rotinput));
-        manager.getRightBackMotor().setVelocity((manager.linearMax * posinput) - (manager.rotMax * rotinput));
+        manager.getLeftFrontMotor().setVelocity((linearMax * -posinput) - (rotMax * rotinput));
+        manager.getRightFrontMotor().setVelocity((manager.linearMax * neginput) - (rotMax * rotinput));
+        manager.getLeftBackMotor().setVelocity((linearMax * -neginput) - (rotMax * rotinput));
+        manager.getRightBackMotor().setVelocity((linearMax * posinput) - (rotMax * rotinput));
     }
 
     public void runDriveLoop() {
