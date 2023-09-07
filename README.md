@@ -18,4 +18,5 @@ FTC Core is a multipurpose library that allows both beginner and advanced FTC te
 ## Installation
 Below is a detailed guide which describes how to install FTC Core into your project. 
 
-
+### yo 
+Good luck this season! - Daniel 
