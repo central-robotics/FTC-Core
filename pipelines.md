@@ -6,7 +6,7 @@ A Pipeline is a series of movements and actions that the robot sequentially exec
 
 The Pipeline Builder follows the same format as the Config Builder, enabling programmers to add an arbitrary number of actions and movements to their programs.
 
-```
+```java
 // Example Pipeline
 //
 // This pipeline showcases all of the options currently available to the builder
